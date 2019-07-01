@@ -27,7 +27,6 @@ $(document).ready(function($) {
  // window.holochainclient.connect(url).then(({call, callZome, close}) => {
 // on mount, do the following right away:
   callHCApi("main", "get_proposals", {}).then(availableGames => {
-    console.log("pendingGames returned from back (is this the array of hashes only ?? ): ", availableGames);
     let pendingGames = JSON.parse(availableGames).Ok;
     if(!pendingGames || !pendingGames.length > 0) {
       const message = "No games current games exist! Click 'Create New Game to get started!'";
@@ -37,9 +36,8 @@ $(document).ready(function($) {
     else {
       let tableString = "";
       pendingGames.forEach(proposal => {
-        tableString += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a href='/checkers' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+        tableString += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a href='/checkers.html/?game=" + proposal.address + "' type='button'>Join Game</a></td></tr>"
       })
-      console.log("A:",tableString);
       document.getElementById("pending-game").innerHTML = tableString;
     }
   })

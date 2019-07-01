@@ -1,4 +1,12 @@
-import callHCApi from "../utils/hc-api-calls.js";
+const WS_PORT = "ws://localhost:8080";
+const INSTANCE_ID = "holochain-checkers-instance";
+
+const callHCApi = (zome, funcName, params) => {
+  const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
+      return await callZome(INSTANCE_ID, zome, funcName)(params)
+  })
+  return response;
+}
 
 $(document).ready(function(){
 ////////
@@ -6,32 +14,45 @@ const gameMsgs = {
   one: "Your turn",
   two: "Await Player 1",
   three: "Await Player 2",
-  four. "You Won!",
-  five. "You Lost."
+  four: "You Won!",
+  five: "You Lost."
 }
 
 let player1State = gameMsgs.one;
 let player2State = gameMsgs.two;
 ////////
 
+function onMount() {
+  const timestamp = Date.now(); // timestamp as number
+  // const timestamp = new Date().toISOString(); //timestamp as string
+  const proposal_addr = button.getAttribute('data-hash');
+  callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+    callHCApi("main", "check_responses", {proposal_addr:gameHash}).then((game) => {
+      if(game.entry.player_1 && game.entry.player_2){
+        console.log("two players exist.. moving to game board... (player: 1, 2) >>", game.entry.player_1, game.entry.player_2 );
+        createGame();
+      }
+      else {
+        console.log("Two players don't exist for this game.");
+      }
+    });
+  })
+}
+
 // on mount fetch game info
-  callHCApi("main", "get_proposals", {}).then(pendingGames => {
-    console.log("pendingGames returned from back (is this the Hash only ?? ): ", pendingGames);
-    callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
-      newGame = {...newGame, id : gameHash, timestamp}
+const createGame = () => {
+   callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
+     newGame = {...newGame, id : gameHash, timestamp}
 
-      // supply game board with agent icons
-      $("#player1Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
-      $("#player2Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
-
-
-      $("#player1State").append("<div>" + player1State + "</div>")
-      $("#player2State").append("<div>" + player2State  + "</div>")
-    }
-  });
+     // supply game board with agent icons
+     $("#player1Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
+     $("#player2Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
 
 
-  $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
+     $("#player1State").append("<div>" + player1State + "</div>")
+     $("#player2State").append("<div>" + player2State  + "</div>")
+   });
+ }
 
   // initialize board spaces:
   function setBoard(){

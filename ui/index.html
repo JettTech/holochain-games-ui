@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./utils/manifest.json">
     <link rel="shortcut icon" href="/assets/favicon.ico">
 
     <title>Holochain Game Lobby</title>
@@ -115,7 +115,6 @@
   <!-- ======================================================================= -->
                             <!-- SCRIPTS -->
   <!-- ======================================================================= -->
-
     <!-- jQuery Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -126,134 +125,132 @@
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1" async></script>
 
     <!-- NPM HC Web Client Script-->
-    <script type="text/javascript" src="/hc-web-client.min.js"></script>
+    <script type="text/javascript" src="/utils/hc-web-client.min.js"></script>
 
     <!-- Lobby Script File -->
     <script type="text/javascript" src="/lobby.js" ></script>
 
   </body>
 
+  <!-- ======================================================================== -->
+                            <!-- STYLING -->
+  <!-- ======================================================================== -->
+  <style media="screen">
+    body {
+      background-color: #052735 !important;
+      box-sizing: border-box;
+      margin: 0 auto;
+      text-align: center;
+    }
 
-<!-- ======================================================================== -->
-                          <!-- STYLING -->
-<!-- ======================================================================== -->
-<style media="screen">
-body {
-  background-color: #052735 !important;
-  box-sizing: border-box;
-  margin: 0 auto;
-  text-align: center;
-}
+    .affix {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 99999 !important;
+    }
 
-.affix {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 99999 !important;
-}
+    #header-img {
+      margin-top: 15px;
+      height: 100%;
+    }
 
-#header-img {
-  margin-top: 15px;
-  height: 100%;
-}
+    .jumbotron {
+      padding: 2rem;
+    }
 
-.jumbotron {
-  padding: 2rem;
-}
+    h1 {
+      padding: 15px;
+      font-size: 36px;
+      text-align: center;
+    }
 
-h1 {
-  padding: 15px;
-  font-size: 36px;
-  text-align: center;
-}
+    h2 {
+      font-size: 24px;
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
 
-h2 {
-  font-size: 24px;
-  width: 75%;
-  margin: 25px auto;
-  text-align: center;
-}
+    h4 {
+      text-align: center;
+      margin: 20px 50px;
+    }
 
-h4 {
-  text-align: center;
-  margin: 20px 50px;
-}
+    hr {
+     background-color: white;
+     width: 60%;
+    }
 
-hr {
- background-color: white;
- width: 60%;
-}
+    li {
+      color: white;
+    }
 
-li {
-  color: white;
-}
+    input {
+      background-color: #fffcf7;
+    }
 
-input {
-  background-color: #fffcf7;
-}
+    #navbarColor03 {
+       justify-content: end;
+    }
 
-#navbarColor03 {
-   justify-content: end;
-}
+    #lets-play {
+      width: 100%;
+      margin: 0 auto;
+      padding-bottom: 50px;
+      padding-top: 0px;
+      border: 1px solid #dee2e6;
+    }
 
-#lets-play {
-  width: 100%;
-  margin: 0 auto;
-  padding-bottom: 50px;
-  padding-top: 0px;
-  border: 1px solid #dee2e6;
-}
+    #score-board {
+      width: 100%;
+      margin: 0 auto;
+      margin: 0px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
 
-#score-board {
-  width: 100%;
-  margin: 0 auto;
-  margin: 0px;
-  padding: 0px;
-  border: 1px solid #dee2e6;
-}
+    /*/---------------------------------------------------
+       Welcome Instrction Zone Styling (swap)
+    ---------------------------------------------------/*/
 
-/*/---------------------------------------------------
-   Welcome Instrction Zone Styling (swap)
----------------------------------------------------/*/
+    #welcome-zone {
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
 
-#welcome-zone {
-  width: 75%;
-  margin: 25px auto;
-  text-align: center;
-}
+    #welcome-zone input {
+      width: 60%;
+      height: 50px;
+      font-size: 26px;
+      margin: 0 auto;
+    }
 
-#welcome-zone input {
-  width: 60%;
-  height: 50px;
-  font-size: 26px;
-  margin: 0 auto;
-}
+    #welcome-zone button {
+      margin-top: 15px;
+      font-size: 22px;
+    }
 
-#welcome-zone button {
-  margin-top: 15px;
-  font-size: 22px;
-}
-
-@media only screen and (max-width: 474px) {
-  input#username {
-    font-size: 1.25em;
-  }
-}
+    @media only screen and (max-width: 474px) {
+      input#username {
+        font-size: 1.25em;
+      }
+    }
 
 
-/*/---------------------------------------------------
-  Pending Gameboard Styling
----------------------------------------------------/*/
-.table th, .table td {
-  background: transparent;
-}
+    /*/---------------------------------------------------
+      Pending Gameboard Styling
+    ---------------------------------------------------/*/
+    .table th, .table td {
+      background: transparent;
+    }
 
-/* tr,
-th,
-td {
-  text-align: center;
-} */
-
-</style>
+    /* tr,
+    th,
+    td {
+      text-align: center;
+    } */
+  </style>
 
 </html>

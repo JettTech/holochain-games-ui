@@ -4,11 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./utils/manifest.json">
     <link rel="shortcut icon" href="/assets/favicon.ico">
 
   	<title>Holochain Checkers</title>
-  	<link rel="stylesheet" href="/styles/checkers.css">
   </head>
 
   <body>
@@ -126,11 +125,53 @@
       </table>
     </div>
 
+    <!-- ======================================================================= -->
+                              <!-- SCRIPTS -->
+    <!-- ======================================================================= -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
     <!-- jdenticon Script-->
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1" async></script>
 
-    <script src="/logic/checkers.js"></script>
+    <script type="text/javascript" src="/utils/hc-web-client.min.js"></script>
+
+    <script type="text/javascript" src="/checkers.js"></script>
   </body>
+
+  <!-- ======================================================================== -->
+                            <!-- STYLING -->
+  <!-- ======================================================================== -->
+  <style media="screen">
+    body {
+      background: url('/assets/wood2.jpg') no-repeat center center fixed; /*wood3 is also a good background opt. */
+      background-size: cover;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    table.checkers {
+        height: 70vh ;
+        width: 800px ;
+        margin: 80px auto;
+        background: #F0D2B4;
+        border: 15px solid #333;
+        border-collapse: collapse; /* */
+    }
+    td.checkers {
+        width: 70px; height: 70px;
+        border: 2px solid #333; /* */
+    }
+    tr.checkers:nth-child(odd) td.checkers:nth-child(even),
+    tr.checkers:nth-child(even) td.checkers:nth-child(odd) {
+        background: #BA7A3A;
+    }
+
+    div.checker{
+    	background: #CC0000;
+     -webkit-transition: 0.3s ease-in-out;
+    	-moz-transition: 0.3s ease-in-out;
+      -o-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+    }
+  </style>
 </html>
