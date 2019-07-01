@@ -1,9 +1,9 @@
 const WS_PORT = "ws://localhost:8080";
 const INSTANCE_ID = "holochain-checkers-instance";
 
-const callHCApi = async(zome, funcName, params) => {
-  const response = await holochainclient.connect(WS_PORT).then(({callZome, close}) => {
-      callZome(INSTANCE_ID, zome, funcName)(params)
+const callHCApi = (zome, funcName, params) => {
+  const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
+      return await callZome(INSTANCE_ID, zome, funcName)(params)
   })
   return response;
 }
@@ -24,27 +24,39 @@ $(document).ready(function($) {
     }
   }
 
+ // window.holochainclient.connect(url).then(({call, callZome, close}) => {
 // on mount, do the following right away:
-  callHCApi("main", "get_proposals", {}).then(pendingGames => {
-    console.log("pendingGames returned from back (is this the array of hashes only ?? ): ", pendingGames);
+  $("#loadCurrentGames").on("click", () => {
+    callHCApi("main", "get_proposals", {}).then(pendingGames => {
+      console.log("pendingGames returned from back (is this the array of hashes only ?? ): ", pendingGames);
 
-    pendingGames.map(proposal => {
-      $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
+      if(!pendingGames.Ok || !pendingGames.Ok.length > 0) {
+        console.log("if");
+        const message = "No games current games exist! Click 'Create New Game to get started!'";
+        $('#alertMessage').html(message);
+        $('#alertModal').modal("show");
+      }
+      else {
+        console.log("Else");
+        pendingGames.map(proposal => {
+          console.log("proposal", proposal);
+          // $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
+        })
+
+        // const game = this.pendingGames.find(proposal => {
+        //   this.pendingGamesArray.find(game => {
+        //     proposal.address === game.id;
+        //   })
+        // });
+        // console.log("game found : ", game);
+        //
+        // if (game) {
+        //   // add the new game entry into table
+        //   $("#pending-game >tbody").append("<tr id='" +  newGame.id + "'><td>" + newGame.name + "</td><td>" + newGame.players.player1 + "</td><td><button id='startGameButton' data-hash='" + newGame.id + "'>Join Game</button></td></tr>");
+        // }
+      }
     })
-
-    // const game = this.pendingGames.find(proposal => {
-    //   this.pendingGamesArray.find(game => {
-    //     proposal.address === game.id;
-    //   })
-    // });
-    // console.log("game found : ", game);
-    //
-    // if (game) {
-    //   // add the new game entry into table
-    //   $("#pending-game >tbody").append("<tr id='" +  newGame.id + "'><td>" + newGame.name + "</td><td>" + newGame.players.player1 + "</td><td><button id='startGameButton' data-hash='" + newGame.id + "'>Join Game</button></td></tr>");
-    // }
   })
-
 
   const addNewGame = (newGame) => {
     console.log("=====");
@@ -62,6 +74,7 @@ $(document).ready(function($) {
 // triggered event handlers:
   $("#addGameButton").on("click", () => {
     const proposalMessage = $("#nameInput").value().trim();
+    console.log("#nameInput : ", proposalMessage);
     // get agent's string
     let author_opponent;
     callHCApi("main", "whoami", {}).then(agent_hash => {
