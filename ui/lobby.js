@@ -43,17 +43,17 @@ $(document).ready(function($) {
           // $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
         })
 
-        // const game = this.pendingGames.find(proposal => {
-        //   this.pendingGamesArray.find(game => {
-        //     proposal.address === game.id;
-        //   })
-        // });
-        // console.log("game found : ", game);
-        //
-        // if (game) {
-        //   // add the new game entry into table
-        //   $("#pending-game >tbody").append("<tr id='" +  newGame.id + "'><td>" + newGame.name + "</td><td>" + newGame.players.player1 + "</td><td><button id='startGameButton' data-hash='" + newGame.id + "'>Join Game</button></td></tr>");
-        // }
+        const game = this.pendingGames.find(proposal => {
+          this.pendingGamesArray.find(game => {
+            proposal.address === game.id;
+          })
+        });
+        console.log("game found : ", game);
+
+        if (game) {
+          // add the new game entry into table
+          $("#pending-game >tbody").append("<tr id='" +  newGame.id + "'><td>" + newGame.name + "</td><td>" + newGame.players.player1 + "</td><td><button id='startGameButton' data-hash='" + newGame.id + "'>Join Game</button></td></tr>");
+        }
       }
     })
   })
@@ -68,26 +68,27 @@ $(document).ready(function($) {
     callHCApi("main", "create_proposal", {message:newGame.name}).then(proposalHash => {
       newGame = {...newGame, id : proposalHash}
     });
-    this.pendingGamesArray.push(newGame);
+    pendingGamesArray.push(newGame);
   };
 
 // triggered event handlers:
   $("#addGameButton").on("click", () => {
-    const proposalMessage = $("#nameInput").value().trim();
+    const proposalMessage = $("#nameInput").val().trim();
     console.log("#nameInput : ", proposalMessage);
     // get agent's string
     let author_opponent;
     callHCApi("main", "whoami", {}).then(agent_hash => {
-      author_opponent = agent_hash;
+      console.log("agent_hash", agent_hash);
+      author_opponent = JSON.parse(agent_hash).Ok;
+      console.log("author_opponent : ", author_opponent);
+      // create new game obj and add to table:
+      let newGame = new Game;
+      let {players, name} = newGame;
+      players = {...players, player1: author_opponent };
+      newGame = {...newGame, players, name:proposalMessage}
+      console.log("newGame", newGame);
+      addNewGame(newGame);
     })
-    console.log("author_opponent : ", author_opponent);
-    // create new game obj and add to table:
-    const newGame = new Game;
-    let {players, name} = newGame;
-    players = {...players, player1: author_opponent };
-    newGame = {...newGame, players, name:proposalMessage}
-    console.log("newGame", newGame);
-    addNewGame(newGame);
   });
 
 
