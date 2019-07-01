@@ -1,10 +1,11 @@
 const WS_PORT = "ws://localhost:8080";
 const INSTANCE_ID = "holochain-checkers-instance";
 
-const callHCApi = (zome, funcName, params) => {
-  holochainclient.connect(WS_PORT).then(({callZome, close}) => {
+const callHCApi = async(zome, funcName, params) => {
+  const response = await holochainclient.connect(WS_PORT).then(({callZome, close}) => {
       callZome(INSTANCE_ID, zome, funcName)(params)
   })
+  return response;
 }
 
 
