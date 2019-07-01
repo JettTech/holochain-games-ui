@@ -1,4 +1,16 @@
+<<<<<<< HEAD:public/logic/lobby.js
 import callHCApi from "../utils/hc-api-calls.js";
+=======
+const WS_PORT = "ws://localhost:8080";
+const INSTANCE_ID = "holochain-checkers-instance";
+
+const callHCApi = (zome, funcName, params) => {
+  holochainclient.connect(WS_PORT).then(({callZome, close}) => {
+      callZome(INSTANCE_ID, zome, funcName)(params)
+  })
+}
+
+>>>>>>> 82f01b17cd273999288b6cd83e7e32f2678a168f:ui/lobby.js
 
 $(document).ready(function($) {
   /////////////

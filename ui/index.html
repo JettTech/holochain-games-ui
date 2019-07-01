@@ -22,7 +22,7 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Lobby CSS -->
-    <link rel="stylesheet" href="/styles/lobby.css">
+    <!-- <link href="/lobby.css"> -->
 
   </head>
 
@@ -109,10 +109,129 @@
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1" async></script>
 
     <!-- NPM HC Web Client Script-->
-    <script type="text/javascript" src="/utils/hc-web-client.min.js"></script>
+    <script type="text/javascript" src="/hc-web-client.min.js"></script>
 
     <!-- Lobby Script File -->
-    <script src="/logic/lobby.js" type="module"></script>
+    <script type="text/javascript" src="/lobby.js" ></script>
 
   </body>
+<style media="screen">
+body {
+  background-color: #052735 !important;
+  box-sizing: border-box;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.affix {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 99999 !important;
+}
+
+#header-img {
+  margin-top: 15px;
+  height: 100%;
+}
+
+.jumbotron {
+  padding: 2rem;
+}
+
+h1 {
+  padding: 15px;
+  font-size: 36px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  width: 75%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+h4 {
+  text-align: center;
+  margin: 20px 50px;
+}
+
+hr {
+ background-color: white;
+ width: 60%;
+}
+
+li {
+  color: white;
+}
+
+input {
+  background-color: #fffcf7;
+}
+
+#navbarColor03 {
+   justify-content: end;
+}
+
+#lets-play {
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 50px;
+  padding-top: 0px;
+  border: 1px solid #dee2e6;
+}
+
+#score-board {
+  width: 100%;
+  margin: 0 auto;
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid #dee2e6;
+}
+
+/*/=====================================================
+   Welcome Instrction Zone Styling (swap)
+=====================================================/*/
+
+#welcome-zone {
+  width: 75%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+#welcome-zone input {
+  width: 60%;
+  height: 50px;
+  font-size: 26px;
+  margin: 0 auto;
+}
+
+#welcome-zone button {
+  margin-top: 15px;
+  font-size: 22px;
+}
+
+@media only screen and (max-width: 474px) {
+  input#username {
+    font-size: 1.25em;
+  }
+}
+
+
+/*/=====================================================
+  Pending Gameboard Styling
+=====================================================/*/
+.table th, .table td {
+  background: transparent;
+}
+
+/* tr,
+th,
+td {
+  text-align: center;
+} */
+
+</style>
+
 </html>
