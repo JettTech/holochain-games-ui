@@ -1,4 +1,13 @@
+body {
+  background: url('/assets/wood2.jpg') no-repeat center center fixed; /*wood3 is also a good background opt. */
+  background-size: cover;
+  height: 100%;
+  overflow: hidden;
+}
+
 table.checkers {
+    width: 60vw;
+    height: 83vh;
     margin: 80px auto;
     background: #F0D2B4;
     border: 15px solid #333;
@@ -20,7 +29,6 @@ div.checker{
   -o-transition: 0.3s ease-in-out;
   transition: 0.3s ease-in-out;
 }
-
 
 
 

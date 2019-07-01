@@ -12,90 +12,92 @@
   </head>
 
   <body>
-    <table class="checkers" id="checkerTable">
-      <tbody>
-        <tr class="checkers">
-            <td onclick="setBoard()" class="checkers" id="0x0"></td>
-            <td  class="checkers"  id="1x0"></td>
-            <td  class="checkers"  id="2x0"></td>
-            <td  class="checkers"  id="3x0"></td>
-            <td  class="checkers"  id="4x0"></td>
-            <td  class="checkers"  id="5x0"></td>
-            <td  class="checkers"  id="6x0"></td>
-            <td  class="checkers"  id="7x0"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers"  id="0x1"></td>
-            <td  class="checkers"  id="1x1"></td>
-            <td  class="checkers"  id="2x1"></td>
-            <td  class="checkers"  id="3x1"></td>
-            <td  class="checkers"  id="4x1"></td>
-            <td  class="checkers"  id="5x1"></td>
-            <td  class="checkers"  id="6x1"></td>
-            <td  class="checkers"  id="7x1"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers"  id="0x2"></td>
-            <td  class="checkers"  id="1x2"></td>
-            <td  class="checkers"  id="2x2"></td>
-            <td  class="checkers"  id="3x2"></td>
-            <td  class="checkers"  id="4x2"></td>
-            <td  class="checkers"  id="5x2"></td>
-            <td  class="checkers"  id="6x2"></td>
-            <td  class="checkers"  id="7x2"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers"  id="0x3"></td>
-            <td  class="checkers"  id="1x3"></td>
-            <td  class="checkers"  id="2x3"></td>
-            <td  class="checkers"  id="3x3"></td>
-            <td  class="checkers"  id="4x3"></td>
-            <td  class="checkers"  id="5x3"></td>
-            <td  class="checkers"  id="6x3"></td>
-            <td  class="checkers"  id="7x3"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers" id="0x4"></td>
-            <td  class="checkers" id="1x4"></td>
-            <td  class="checkers" id="2x4"></td>
-            <td  class="checkers" id="3x4"></td>
-            <td  class="checkers" id="4x4"></td>
-            <td  class="checkers" id="5x4"></td>
-            <td  class="checkers" id="6x4"></td>
-            <td  class="checkers" id="7x4"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers" id="0x5"></td>
-            <td  class="checkers" id="1x5"></td>
-            <td  class="checkers" id="2x5"></td>
-            <td  class="checkers" id="3x5"></td>
-            <td  class="checkers" id="4x5"></td>
-            <td  class="checkers" id="5x5"></td>
-            <td  class="checkers" id="6x5"></td>
-            <td  class="checkers" id="7x5"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers" id="0x6"></td>
-            <td  class="checkers" id="1x6"></td>
-            <td  class="checkers" id="2x6"></td>
-            <td  class="checkers" id="3x6"></td>
-            <td  class="checkers" id="4x6"></td>
-            <td  class="checkers" id="5x6"></td>
-            <td  class="checkers" id="6x6"></td>
-            <td  class="checkers" id="7x6"></td>
-        </tr>
-        <tr class="checkers">
-            <td  class="checkers" id="0x7"></td>
-            <td  class="checkers" id="1x7"></td>
-            <td  class="checkers" id="2x7"></td>
-            <td  class="checkers" id="3x7"></td>
-            <td  class="checkers" id="4x7"></td>
-            <td  class="checkers" id="5x7"></td>
-            <td  class="checkers" id="6x7"></td>
-            <td  class="checkers" id="7x7"></td>
-        </tr>
-      </tbody>
-    </table>
+    <div id="gameContainer" class="container-fluid">
+      <table class="checkers" id="checkerTable">
+        <tbody>
+          <tr class="checkers">
+              <td id="#boardInit" class="checkers" id="0x0"></td>
+              <td  class="checkers"  id="1x0"></td>
+              <td  class="checkers"  id="2x0"></td>
+              <td  class="checkers"  id="3x0"></td>
+              <td  class="checkers"  id="4x0"></td>
+              <td  class="checkers"  id="5x0"></td>
+              <td  class="checkers"  id="6x0"></td>
+              <td  class="checkers"  id="7x0"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers"  id="0x1"></td>
+              <td  class="checkers"  id="1x1"></td>
+              <td  class="checkers"  id="2x1"></td>
+              <td  class="checkers"  id="3x1"></td>
+              <td  class="checkers"  id="4x1"></td>
+              <td  class="checkers"  id="5x1"></td>
+              <td  class="checkers"  id="6x1"></td>
+              <td  class="checkers"  id="7x1"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers"  id="0x2"></td>
+              <td  class="checkers"  id="1x2"></td>
+              <td  class="checkers"  id="2x2"></td>
+              <td  class="checkers"  id="3x2"></td>
+              <td  class="checkers"  id="4x2"></td>
+              <td  class="checkers"  id="5x2"></td>
+              <td  class="checkers"  id="6x2"></td>
+              <td  class="checkers"  id="7x2"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers"  id="0x3"></td>
+              <td  class="checkers"  id="1x3"></td>
+              <td  class="checkers"  id="2x3"></td>
+              <td  class="checkers"  id="3x3"></td>
+              <td  class="checkers"  id="4x3"></td>
+              <td  class="checkers"  id="5x3"></td>
+              <td  class="checkers"  id="6x3"></td>
+              <td  class="checkers"  id="7x3"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers" id="0x4"></td>
+              <td  class="checkers" id="1x4"></td>
+              <td  class="checkers" id="2x4"></td>
+              <td  class="checkers" id="3x4"></td>
+              <td  class="checkers" id="4x4"></td>
+              <td  class="checkers" id="5x4"></td>
+              <td  class="checkers" id="6x4"></td>
+              <td  class="checkers" id="7x4"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers" id="0x5"></td>
+              <td  class="checkers" id="1x5"></td>
+              <td  class="checkers" id="2x5"></td>
+              <td  class="checkers" id="3x5"></td>
+              <td  class="checkers" id="4x5"></td>
+              <td  class="checkers" id="5x5"></td>
+              <td  class="checkers" id="6x5"></td>
+              <td  class="checkers" id="7x5"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers" id="0x6"></td>
+              <td  class="checkers" id="1x6"></td>
+              <td  class="checkers" id="2x6"></td>
+              <td  class="checkers" id="3x6"></td>
+              <td  class="checkers" id="4x6"></td>
+              <td  class="checkers" id="5x6"></td>
+              <td  class="checkers" id="6x6"></td>
+              <td  class="checkers" id="7x6"></td>
+          </tr>
+          <tr class="checkers">
+              <td  class="checkers" id="0x7"></td>
+              <td  class="checkers" id="1x7"></td>
+              <td  class="checkers" id="2x7"></td>
+              <td  class="checkers" id="3x7"></td>
+              <td  class="checkers" id="4x7"></td>
+              <td  class="checkers" id="5x7"></td>
+              <td  class="checkers" id="6x7"></td>
+              <td  class="checkers" id="7x7"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 

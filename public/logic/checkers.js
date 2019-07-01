@@ -3,7 +3,7 @@ import callHCApi from "../utils/hc-api-calls.js";
 $(document).ready(function(){
 ////////
 
-// on mount do the following:
+// on mount fetch game info
   callHCApi("main", "get_proposals", {}).then(pendingGames => {
     console.log("pendingGames returned from back (is this the Hash only ?? ): ", pendingGames);
     callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
@@ -12,7 +12,7 @@ $(document).ready(function(){
   });
 
   // initialize board spaces:
-  function setBoard() {
+  function setBoard(){
     const items = [
       [0, 0],
       [0, 2],
@@ -35,8 +35,13 @@ $(document).ready(function(){
     }
   }
 
+  $('#boardInit').on('click','td',function() {
+    this.setBoard();
+  });
+
+/////////////////////////////
 // game movement logic:
-  $('#checkerTable tbody').on( 'click', 'td', function () {
+  $('#checkerTable tbody').on('click','td',function() {
       console.log("click")
       alert('Row ' + $(this).closest("tr").index());
       alert('Column ' + $(this).closest("td").index());
