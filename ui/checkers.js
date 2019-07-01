@@ -23,7 +23,7 @@ let player2State = gameMsgs.two;
 ////////
 
 function onMount() {
-  const timestamp = Date.now(); // timestamp as number
+  const timestamp = 0; // timestamp as number
   // const timestamp = new Date().toISOString(); //timestamp as string
   const urlHash = this.window.location.href;
   console.log("urlHash : ", urlHash);
@@ -31,17 +31,25 @@ function onMount() {
   console.log("proposal_addr : ", proposal_addr);
 
   callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
-    callHCApi("main", "check_responses", {proposal_addr:gameHash}).then((game) => {
-      let currentGame = JSON.parse(game).Ok;
-      console.log("current game", currentGame);
-      if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-        console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-        createGame();
-      }
-      else {
-        console.log("Two players don't exist for this game.");
-      }
-    });
+    let parsedHash = JSON.parse(gameHash);
+    if(!parsedHash.Err){
+      callHCApi("main", "check_responses", {proposal_addr:parsedHash.Ok}).then((game) => {
+        let currentGame = JSON.parse(game).Ok;
+        console.log("current game", currentGame);
+        if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
+          console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+          createGame();
+        }
+        else {
+          console.log("Two players don't exist for this game.");
+        }
+      });
+    }
+    else{
+        console.log("Failed to Accept Proposal");
+        alert("Error:"+gameHash)
+    }
+
   })
 }
 
@@ -77,9 +85,9 @@ const createGame = () => {
       [7, 1],
     ];
     for(i=0;i<items.length;i++) {
-      console.log("i:",i)
-      console.log("items0: ",items[i][0]);
-      console.log("items1: ",items[i][1]);
+      // console.log("i:",i)
+      // console.log("items0: ",items[i][0]);
+      // console.log("items1: ",items[i][1]);
       document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="red-piece"></span>`;
     }
   }
