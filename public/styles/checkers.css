@@ -6,8 +6,8 @@ body {
 }
 
 table.checkers {
-    width: 60vw;
-    height: 83vh;
+    height: 70vh ;
+    width: 800px ;
     margin: 80px auto;
     background: #F0D2B4;
     border: 15px solid #333;

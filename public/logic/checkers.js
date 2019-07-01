@@ -2,14 +2,36 @@ import callHCApi from "../utils/hc-api-calls.js";
 
 $(document).ready(function(){
 ////////
+const gameMsgs = {
+  one: "Your turn",
+  two: "Await Player 1",
+  three: "Await Player 2",
+  four. "You Won!",
+  five. "You Lost."
+}
+
+let player1State = gameMsgs.one;
+let player2State = gameMsgs.two;
+////////
 
 // on mount fetch game info
   callHCApi("main", "get_proposals", {}).then(pendingGames => {
     console.log("pendingGames returned from back (is this the Hash only ?? ): ", pendingGames);
     callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
       newGame = {...newGame, id : gameHash, timestamp}
+
+      // supply game board with agent icons
+      $("#player1Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
+      $("#player2Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
+
+
+      $("#player1State").append("<div>" + player1State + "</div>")
+      $("#player2State").append("<div>" + player2State  + "</div>")
     }
   });
+
+
+  $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
 
   // initialize board spaces:
   function setBoard(){

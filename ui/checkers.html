@@ -13,6 +13,33 @@
 
   <body>
     <div id="gameContainer" class="container-fluid">
+
+      <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">Game Board</h4>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">
+                  Player 1
+                  <span id="player1Icon"></span>
+                </th>
+                <th scope="col">
+                  Player 2
+                  <span id="player2Icon"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="player1State"></td>
+                <td id="player2State"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <table class="checkers" id="checkerTable">
         <tbody>
           <tr class="checkers">
