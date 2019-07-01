@@ -48,7 +48,8 @@ function onMount() {
 // on mount fetch game info
 const createGame = () => {
    callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
-     newGame = {...newGame, id : gameHash, timestamp}
+
+     const proposal = JSON.parse(gameHash).Ok.proposal;
 
      // supply game board with agent icons
      $("#player1Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")

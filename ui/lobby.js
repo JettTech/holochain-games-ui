@@ -11,6 +11,7 @@ const callHCApi = (zome, funcName, params) => {
 
 $(document).ready(function($) {
   /////////////
+  let whoami = "" ;
   let pendingGamesArray = [];
   class Game {
     constructor() {
@@ -34,12 +35,27 @@ $(document).ready(function($) {
       $('#alertModal').modal("show");
     }
     else {
-      let tableString = "";
-      pendingGames.forEach(proposal => {
-        tableString += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a href='/checkers.html?game=" + proposal.address + "' type='button'>Join Game</a></td></tr>"
+      const myGames = pendingGames.filter(proposal => {
+        proposal.entry.agent === whoami;
+      });
+
+      let myAuthoredGames = "";
+      myGames.forEach(proposal => {
+        myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
       })
-      document.getElementById("pending-game").innerHTML = tableString;
+      document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+      const otherGames = pendingGames.filter(proposal => {
+        proposal.entry.agent !== whoami;
+      });
+
+      let currentProposedGames = "";
+      otherGames.forEach(proposal => {
+        currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+      })
+      document.getElementById("pending-games").innerHTML = currentProposedGames;
   })
 
   const addNewGame = (newGame) => {
@@ -60,10 +76,9 @@ $(document).ready(function($) {
     // get agent's string
     let author_opponent;
     callHCApi("main", "whoami", {}).then(agent_hash => {
-      console.log("agent_hash", agent_hash);
       author_opponent = JSON.parse(agent_hash).Ok;
-      console.log("author_opponent : ", author_opponent);
-
+      // set global ref to agent ID
+      whoami = agent_hash;
       // create new game obj and add to table:
       let newGame = new Game;
       let {players, name} = newGame;
@@ -73,6 +88,41 @@ $(document).ready(function($) {
       addNewGame(newGame);
     })
   });
+
+  $("#startGameButton").on("click", () => {
+    const timestamp = Date.now(); // timestamp as number
+    // const timestamp = new Date().toISOString(); //timestamp as string
+    const proposal_addr = button.getAttribute('data-hash');
+    callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+      callHCApi("main", "check_responses", {proposal_addr:gameHash}).then((game) => {
+        let currentGame = JSON.parse(game).Ok;
+        console.log("current game", currentGame);
+        if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
+          console.log("two players exist.. moving to current Gameboard... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+          //go to checkers game page
+          const gameHash = gameHash;
+          console.console.log("gameHash");
+          const currentURL = window.location.origin;
+          $.post(currentURL + "/checkers?game="+gameHash, currentGame, function(data, status){
+            console.log("Going to play offered checkers game with following info : ", data, status);
+          });
+        }
+        else if(currentGame.entry && whoami !== "" && currentGame.entry.player_1 === whoami){
+          console.log("two players exist.. moving to current Gameboard... (player: 1 ONLY) >>", currentGame.entry.player_1);
+          //go to checkers game page
+          const gameHash = gameHash;
+          console.console.log("gameHash");
+          const currentURL = window.location.origin;
+          $.post(currentURL + "/checkers?game="+gameHash, currentGame, function(data, status){
+            console.log("Visitng your checkers game with following info : ", data, status);
+          });
+        }
+        else {
+          console.log("You are not the owner of this game; and two players are not currently registered to play.");
+        }
+      });
+    })
+  })
 
 /////////////
 }); // end of file

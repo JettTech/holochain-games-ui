@@ -83,8 +83,26 @@
           </div>
         </div>
         <!-- End of Modal -->
-
-        <div id="score-board" class="container-fluid jumbotron bg-light">
+        <div id="authored-games-board" class="container-fluid jumbotron bg-light">
+          <div class="row">
+            <div class="col-md-12">
+              <h1 class="text-center text-dark">Authored Games</h1>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Game Name</th>
+                    <th scope="col">Author Icon</th>
+                    <th scope="col">Join Game</th>
+                  </tr>
+                </thead>
+                <tbody id="my-pending-games"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          </br>
+          </br>
+        <div id="proposed-games-board" class="container-fluid jumbotron bg-light">
           <div class="row">
             <div class="col-md-12">
               <h1 class="text-center text-dark">Proposed Games</h1>
@@ -92,12 +110,10 @@
                 <thead>
                   <tr>
                     <th scope="col">Game Name</th>
-                    <th scope="col">Player 1 Icon</th>
-                    <th scope="col">Join</th> <!-- col in which to place btn to join new game -->
-                  </tr>
+                    <th scope="col">Author Icon</th>
+                    <th scope="col">Join Game</th>
                 </thead>
-                <tbody id="pending-game">
-                </tbody>
+                <tbody id="pending-games"></tbody>
               </table>
             </div>
           </div>
@@ -202,14 +218,6 @@
       border: 1px solid #dee2e6;
     }
 
-    #score-board {
-      width: 100%;
-      margin: 0 auto;
-      margin: 0px;
-      padding: 0px;
-      border: 1px solid #dee2e6;
-    }
-
     /*/---------------------------------------------------
        Welcome Instrction Zone Styling (swap)
     ---------------------------------------------------/*/
@@ -246,11 +254,23 @@
       background: transparent;
     }
 
-    /* tr,
-    th,
-    td {
-      text-align: center;
-    } */
+    #authored-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+    #proposed-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 5px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+
   </style>
 
 </html>
