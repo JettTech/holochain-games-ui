@@ -1,6 +1,4 @@
-'use strict';
-
-import callHCApi from "./utils/hc-api-calls";
+import callHCApi from "../utils/hc-api-calls.js";
 // var {callHCApi} = require("./utils/hc-api-calls");
 
 $(document).ready(function($) {

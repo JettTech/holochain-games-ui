@@ -39,7 +39,7 @@
       <div id="lets-play" class="row jumbotron text-white bg-success">
         <div id="welcome-zone" class="row">
           <div class="col-md-12 form-group">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newGameModal">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newGameModal" style="border: 1px solid #fff">
               Create New Game
             </button>
           </div>
@@ -97,10 +97,10 @@
       </div>
     </div>
 
-    <div id="header-img" class="row jumbotron text-white bg-info">
-      <div class="col-md-12">
-        <h6 class="text-center text-light" style="margin:20px;">Holochain Checkers Game | Dev Camp June 2019</h6>
-      </div>
+    <div id="header-img" class="row jumbotron text-white bg-info" style="min-height:100%">
+      <footer class="col-md-12" style="height: 50px">
+        <h6 class="text-center text-light" style="margin:5px;">Holochain Checkers Game | Dev Camp June 2019</h6>
+      </footer>
     </div>
   </div>
 
@@ -111,7 +111,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <!-- Lobby Script File -->
-    <script src="/logic/lobby.js" type="module">></script>
+    <script src="/logic/lobby.js" type="module"></script>
 
   </body>
 </html>
