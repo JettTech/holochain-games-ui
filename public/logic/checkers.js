@@ -1,8 +1,6 @@
 $(document).ready(function(){
 ////////
 
-
-
 // on mount do the following:
   callHCApi("main", "get_proposals", {}).then(pendingGames => {
     console.log("pendingGames returned from back (is this the Hash only ?? ): ", pendingGames);
