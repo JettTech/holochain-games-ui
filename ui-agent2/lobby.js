@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3002";
-const INSTANCE_ID = "holochain-checkers-instance-two";
+const WS_PORT = "ws://localhost:3001";
+const INSTANCE_ID = "holochain-checkers-instance";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -26,7 +26,6 @@ $(document).ready(function($) {
   //   }
   // }
 
- // window.holochainclient.connect(url).then(({call, callZome, close}) => {
 // on mount, do the following right away:
   callHCApi("main", "whoami", {}).then(agent_hash => {
     author_opponent = JSON.parse(agent_hash).Ok;
@@ -37,7 +36,7 @@ $(document).ready(function($) {
     console.log("whoami : ", whoami);
     callHCApi("main", "get_proposals", {}).then((availableGames) => {
       let pendingGames = JSON.parse(availableGames).Ok;
-      // console.log(pendingGames);
+      console.log("pendingGames", pendingGames);
 
       if(!pendingGames || !pendingGames.length > 0) {
         const message = "No games current games exist! Click 'Create New Game to get started!'";
@@ -46,6 +45,7 @@ $(document).ready(function($) {
       }
       else {
         const myGames = pendingGames.filter(proposal => {
+          console.log("reaching inside...???");
           return proposal.entry.agent === whoami;
         });
         console.log("myGames", myGames);
@@ -55,7 +55,6 @@ $(document).ready(function($) {
           myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
-      }
 
       //////////////////////////////////////////////////////////////////////////////////////
         const otherGames = pendingGames.filter(proposal => {
@@ -68,6 +67,7 @@ $(document).ready(function($) {
           currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='60' height='60'></svg></td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
+      }
     })
   })
 
@@ -98,8 +98,8 @@ $(document).ready(function($) {
     addNewGame();
   });
 
-  $("#startGameButton").on("click", () => {
-    const timestamp = Date.now(); // timestamp as number
+  $("#startGameButton").on("click", (newGame) => {
+    const timestamp = 0; // timestamp as u32 number
     // const timestamp = new Date().toISOString(); //timestamp as string
     const proposal_addr = button.getAttribute('data-hash');
     callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {

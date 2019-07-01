@@ -1,15 +1,15 @@
 {
   "name": "holochain-games-ui",
   "version": "0.0.1",
-  "main": "server.js",
+  "main": "index.html",
   "description": "A game lobby and checkers ui to pair with holochain chess DNA.",
   "scripts": {
     "hc:start": "holochain -c ./conductor-config.toml",
+    "build": "cp -r ui ui-agent1 && cp -r ui ui-agent2",
     "web": "hc web",
     "test": "test",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "build": "NODE_PORT=3301 && node build && node copy-to-ui.js",
     "fetch": "download-github-release willemolding generic-game-holochain"
   },
   "repository": {
@@ -22,13 +22,7 @@
     "url": "https://github.com/JettTech/holochain-games-ui/issues"
   },
   "homepage": "https://github.com/JettTech/holochain-games-ui#readme",
-  "devDependencies": {
-    "cypress": "^3.3.1",
-    "download-github-release": "^0.3.2"
-  },
   "dependencies": {
-    "@holochain/hc-web-client": "^0.5.0",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "rimraf": "^2.6.3"
   }
 }
