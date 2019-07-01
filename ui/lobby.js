@@ -1,5 +1,12 @@
-import callHCApi from "../utils/hc-api-calls.js";
-// var {callHCApi} = require("./utils/hc-api-calls");
+const WS_PORT = "ws://localhost:8080";
+const INSTANCE_ID = "holochain-checkers-instance";
+
+const callHCApi = (zome, funcName, params) => {
+  holochainclient.connect(WS_PORT).then(({callZome, close}) => {
+      callZome(INSTANCE_ID, zome, funcName)(params)
+  })
+}
+
 
 $(document).ready(function($) {
   /////////////
