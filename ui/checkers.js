@@ -36,25 +36,42 @@ let player2State = gameMsgs.two;
 ////////
 
 function onMount() {
+  const timestamp = 0; // timestamp as number
+  // const timestamp = new Date().toISOString(); //timestamp as string
   const urlHash = this.window.location.href;
   console.log("urlHash : ", urlHash);
   const proposal_addr = urlHash.split("?")[1].split("=")[1];
   console.log("proposal_addr : ", proposal_addr);
 
   callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
-    callHCApi("main", "check_responses", {proposal_addr:gameHash}).then((game) => {
-      let chosenGame = JSON.parse(game).Ok;
-      console.log("current game", chosenGame);
+    let parsedHash = JSON.parse(gameHash);
+    if(!parsedHash.Err){
+      callHCApi("main", "check_responses", {proposal_addr:parsedHash.Ok}).then((game) => {
+        let currentGame = JSON.parse(game).Ok;
+        console.log("current game", currentGame);
 
-      currentGame = new Game;
-      let {players, id} = currentGame;
-      players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
-      id = gameHash;
-      currentGame = {...currentGame, players, id}
-      console.log("currentGame", currentGame);
+        if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
+          console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
 
-      createGame();
-    });
+          currentGame = new Game;
+          let {players, id} = currentGame;
+          players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
+          id = gameHash;
+          currentGame = {...currentGame, players, id}
+          console.log("currentGame", currentGame);
+
+          createGame();
+        }
+        else {
+          console.log("Two players don't exist for this game.");
+        }
+      });
+    }
+    else{
+        console.log("Failed to Accept Proposal");
+        alert("Error:"+gameHash)
+    }
+
   })
 }
 
@@ -94,9 +111,9 @@ const createGame = () => {
       [7, 1],
     ];
     for(i=0;i<items.length;i++) {
-      console.log("i:",i)
-      console.log("items0: ",items[i][0]);
-      console.log("items1: ",items[i][1]);
+      // console.log("i:",i)
+      // console.log("items0: ",items[i][0]);
+      // console.log("items1: ",items[i][1]);
       document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="red-piece"></span>`;
     }
   }
