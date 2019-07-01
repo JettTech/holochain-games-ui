@@ -1,0 +1,110 @@
+table.chessboard {
+  margin: 80px auto;
+  background: #F0D2B4;
+  border: 15px solid #333;
+  border-collapse: collapse; /* */
+}
+td.chessboard {
+  width: 70px; height: 70px;
+  border: 2px solid #333; /* */
+}
+tr.chessboard:nth-child(odd) td.chessboard:nth-child(even),
+tr.chessboard:nth-child(even) td.chessboard:nth-child(odd) {
+  background: #BA7A3A;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* /////////////////////////////////////////////////////////// */
+/*/=====================================================
+  Turn Indicator Styling
+=====================================================/*/
+
+#current-turn {
+  width: 75%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+
+/*/=====================================================
+  Game Styling
+=====================================================/*/
+#game-div {
+  width: 75%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+#player1-name {
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+swap
+#player1-chosen {
+  margin-top: 25px;
+  font-size: 60px;
+}
+
+li {
+  margin: 12px 0;
+  font-size: 24px;
+}
+
+.outcomes {
+  /*position: absolute;*/
+  bottom: 10px;
+  width: 90%;
+  text-align: center;
+}
+
+.outcome-trackers {
+  display: inline-block;
+}
+
+#result h2 {
+  margin-top: 20px;
+  font-size: 60px;
+}
+
+@media only screen and (max-width: 374px) {
+  #refereeId {
+    font-size: 1.05em;
+  }
+}
