@@ -36,7 +36,7 @@ $(document).ready(function($) {
     else {
       let tableString = "";
       pendingGames.forEach(proposal => {
-        tableString += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a href='/checkers.html/?game=" + proposal.address + "' type='button'>Join Game</a></td></tr>"
+        tableString += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><a href='/checkers.html?game=" + proposal.address + "' type='button'>Join Game</a></td></tr>"
       })
       document.getElementById("pending-game").innerHTML = tableString;
     }
