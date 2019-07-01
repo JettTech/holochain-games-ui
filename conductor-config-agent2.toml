@@ -2,7 +2,7 @@
 [[agents]]
 id = "test_agent2"
 name = "Agent 2"
-public_address = "HcSCIUKodbWktcbmwyAaVrYnsbadi6b9sOV9D4ZoE8i333ZtcGw38Jn3U6u63qi"
+public_address = "HcScj3nWSkA7BuacmvrI56rRBhd89CqfvvIVPnxBkmbpwbd6WQ6mK9c6M6rrh3z"
 keystore_file = "./agent2.keystore"
 
 # -----------  DNA  -----------
@@ -29,31 +29,23 @@ admin = true
 type = "websocket"
 port = 3301
 [[interfaces.instances]]
-id = "holochain-checkers-instance-interface"
-
-[[interfaces]]
-id = "checkers_http_interface"
-[interfaces.driver]
-type = "http"
-port = 4401
-[[interfaces.instances]]
-id = "holochain-checkers-instance-interface"
+id = "holochain-checkers-instance"
 
 # -----------  UI  -----------
 [[ui_bundles]]
 id = "main"
-root_dir = "./ui-src"
+root_dir = "./ui-agent2"
 hash = "Qm000"
 
 [[ui_interfaces]]
 id = "ui-interface"
 bundle = "main"
 port = 3002
-dna_interface = "holochain-checkers-instance-interface"
+dna_interface = "checkers_websocket_interface"
 
 # -----------  Networking  -----------
-# [network]
+[network]
 # n3h_mode = "REAL"
-# n3h_persistence_path = "/tmp"
-# n3h_log_level = "i"
-# bootstrap_nodes = []
+n3h_persistence_path = "/tmp"
+n3h_log_level = "i"
+bootstrap_nodes = ["wss://192.168.1.101:41143/?a=HcSCjs7X7K8YiS8m7r857duSjJni48Spg83Z7yKg4GvbKwam8YNDv4bZHp9h8zi"]
