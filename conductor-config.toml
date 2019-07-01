@@ -2,14 +2,23 @@
 [[agents]]
 id = "test_agent1"
 name = "Agent 1"
-public_address = "HcSCIUKodbWktcbmwyAaVrYnsbadi6b9sOV9D4ZoE8i333ZtcGw38Jn3U6u63qi"
+public_address = "HcScIK3iACtDb6hch75SwfPJ9xEa8nkwjdxen5OMbhtkgwoaheSqr6RrM796sqi"
 keystore_file = "./agent1.keystore"
+# -----------  Agents  -----------
+[[agents]]
+id = "test_agent2"
+name = "Agent 2"
+public_address = "HcScj3nWSkA7BuacmvrI56rRBhd89CqfvvIVPnxBkmbpwbd6WQ6mK9c6M6rrh3z"
+keystore_file = "./agent2.keystore"
+
 
 # -----------  DNA  -----------
 [[dnas]]
 id = "holochain_checkers"
 file = "../generic-game-holochain/dist/generic-game.dna.json"
 hash = "QmXTk8QLtYxw4bvPTuHupRZtXikueL1venGcLNhU6GXn2P"
+
+#----------Instance-------
 
 [[instances]]
 id = "holochain-checkers-instance"
@@ -22,38 +31,66 @@ file = "app_spec.log"
 type = "memory"
 path = "tmp-storage"
 
+[[instances]]
+id = "holochain-checkers-instance-two"
+dna = "holochain_checkers"
+agent = "test_agent2"
+[instances.logger]
+type = "simple"
+file = "app_spec.log"
+[instances.storage]
+type = "memory"
+path = "tmp-storage"
+
+
 [[interfaces]]
-id = "checkers_websocket_interface"
+id = "checkers_websocket_interface1"
+admin = true
+[interfaces.driver]
+type = "websocket"
+port = 8080
+[[interfaces.instances]]
+id = "holochain-checkers-instance"
+
+
+[[interfaces]]
+id = "checkers_websocket_interface2"
 admin = true
 [interfaces.driver]
 type = "websocket"
 port = 3301
 [[interfaces.instances]]
-id = "holochain-checkers-instance-interface"
+id = "holochain-checkers-instance-two"
 
-[[interfaces]]
-id = "checkers_http_interface"
-[interfaces.driver]
-type = "http"
-port = 4401
-[[interfaces.instances]]
-id = "holochain-checkers-instance-interface"
 
-# -----------  UI  -----------
+# -----------  UI Agent 1 -----------
 [[ui_bundles]]
-id = "main"
-root_dir = "./ui-src"
+id = "main1"
+root_dir = "./ui-agent1"
 hash = "Qm000"
 
 [[ui_interfaces]]
-id = "ui-interface"
-bundle = "main"
+id = "ui-interface1"
+bundle = "main1"
+port = 3001
+dna_interface = "checkers_websocket_interface1"
+
+# -----------  UI Agent2  -----------
+[[ui_bundles]]
+id = "main2"
+root_dir = "./ui-agent2"
+hash = "Qm000"
+
+[[ui_interfaces]]
+id = "ui-interface2"
+bundle = "main2"
 port = 3002
-dna_interface = "holochain-checkers-instance-interface"
+dna_interface = "checkers_websocket_interface2"
+
 
 # -----------  Networking  -----------
 # [network]
-# n3h_mode = "REAL"
+# # n3h_mode = "REAL"
 # n3h_persistence_path = "/tmp"
 # n3h_log_level = "i"
 # bootstrap_nodes = []

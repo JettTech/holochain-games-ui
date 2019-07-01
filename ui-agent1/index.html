@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="manifest" href="./utils/manifest.json">
+    <link rel="shortcut icon" href="./assets/favicon.ico">
+
+    <title>Holochain Game Lobby</title>
+
+    <!-- CSS reset Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
+
+    <!-- Bootstrap Stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Bootswatch Stylesheet -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/sketchy/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Lobby CSS -->
+    <!-- <link href="/lobby.css"> -->
+
+  </head>
+
+  <body>
+    <!-- Start of Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">Alert</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="alertMessage"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Emd of Alert Modal -->
+
+    <div class="container-fluid">
+      <div id="header-img" class="row jumbotron bg-info">
+        <header class="col-md-12">
+          <h1 class="text-light">Welcome to the Holochain Checkers Game Suite</h1>
+          <hr class="text-primary" />
+          <h4 class="text-primary">To play either select an proposed game, or create a new game proposal and await a second user to join as your opponent.<br/> <br/> Only 2 players per a game are allowed. <br/> <br/> Good luck!</h4>
+        </header>
+      </div>
+
+      <div id="lets-play" class="row jumbotron text-white bg-success">
+        <div id="welcome-zone" class="row">
+          <div class="col-md-12 form-group">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newGameModal" style="border: 1px solid #fff">
+              Create New Game
+            </button>
+          </div>
+
+        <!-- Start of Modal -->
+        <div class="modal fade" id="newGameModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title text-dark" style="text-align:center" id="newGameModalTitle">Add Game</h5>
+                <form>
+                  <div class="form-group">
+                    <label for="name-input">Game Name</label>
+                    <input id="nameInput" type="text" class="form-control">
+                  </div>
+                  <div class="text-center">
+                    <button id="addGameButton" class="btn btn-primary btn-lg" type="submit">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of Modal -->
+        <div id="authored-games-board" class="container-fluid jumbotron bg-light">
+          <div class="row">
+            <div class="col-md-12">
+              <h1 class="text-center text-dark">Authored Games</h1>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Game Name</th>
+                    <th scope="col">Join Game</th>
+                  </tr>
+                </thead>
+                <tbody id="my-pending-games"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          </br>
+          </br>
+        <div id="proposed-games-board" class="container-fluid jumbotron bg-light">
+          <div class="row">
+            <div class="col-md-12">
+              <h1 class="text-center text-dark">Proposed Games</h1>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Game Name</th>
+                    <th scope="col">Author Icon</th>
+                    <th scope="col">Join Game</th>
+                </thead>
+                <tbody id="pending-games"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="row" style="height: 50px; position:fixed; bottom:0; min-width:100%">
+      <div id="header-img" class=" col-md-12 text-white bg-info">
+        <h6 class="text-center text-light" style="padding-top:10px;">Holochain Checkers Game | Dev Camp June 2019</h6>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ======================================================================= -->
+                            <!-- SCRIPTS -->
+  <!-- ======================================================================= -->
+    <!-- jQuery Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap CSS Framework JS Script -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <!-- jdenticon Script-->
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1" async></script>
+
+    <!-- NPM HC Web Client Script-->
+    <script type="text/javascript" src="/utils/hc-web-client.min.js"></script>
+
+    <!-- Lobby Script File -->
+    <script type="text/javascript" src="/lobby.js" ></script>
+
+  </body>
+
+  <!-- ======================================================================== -->
+                            <!-- STYLING -->
+  <!-- ======================================================================== -->
+  <style media="screen">
+    body {
+      background-color: #052735 !important;
+      box-sizing: border-box;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .affix {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 99999 !important;
+    }
+
+    #header-img {
+      margin-top: 15px;
+      height: 100%;
+    }
+
+    .jumbotron {
+      padding: 2rem;
+    }
+
+    h1 {
+      padding: 15px;
+      font-size: 36px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
+
+    h4 {
+      text-align: center;
+      margin: 20px 50px;
+    }
+
+    hr {
+     background-color: white;
+     width: 60%;
+    }
+
+    li {
+      color: white;
+    }
+
+    input {
+      background-color: #fffcf7;
+    }
+
+    #navbarColor03 {
+       justify-content: end;
+    }
+
+    #lets-play {
+      width: 100%;
+      margin: 0 auto;
+      padding-bottom: 50px;
+      padding-top: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+    /*/---------------------------------------------------
+       Welcome Instrction Zone Styling (swap)
+    ---------------------------------------------------/*/
+
+    #welcome-zone {
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
+
+    #welcome-zone input {
+      width: 60%;
+      height: 50px;
+      font-size: 26px;
+      margin: 0 auto;
+    }
+
+    #welcome-zone button {
+      margin-top: 15px;
+      font-size: 22px;
+    }
+
+    @media only screen and (max-width: 474px) {
+      input#username {
+        font-size: 1.25em;
+      }
+    }
+
+
+    /*/---------------------------------------------------
+      Pending Gameboard Styling
+    ---------------------------------------------------/*/
+    .table th, .table td {
+      background: transparent;
+    }
+
+    #startGameButton {
+      text-decoration: none;
+      background: #28a745;
+      color:#ffffff;
+      width: 80px;
+    }
+
+    #authored-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+    #proposed-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 5px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+
+  </style>
+
+</html>
