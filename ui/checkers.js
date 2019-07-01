@@ -30,50 +30,56 @@ class Game {
   }
 }
 
+let whoami = "";
 let currentGame = {};
 let player1State = gameMsgs.one;
 let player2State = gameMsgs.two;
 ////////
 
-function onMount() {
-  const timestamp = 0; // timestamp as number
-  // const timestamp = new Date().toISOString(); //timestamp as string
-  const urlHash = this.window.location.href;
-  console.log("urlHash : ", urlHash);
-  const proposal_addr = urlHash.split("?")[1].split("=")[1];
-  console.log("proposal_addr : ", proposal_addr);
-
-  callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
-    let parsedHash = JSON.parse(gameHash);
-    if(!parsedHash.Err){
-      callHCApi("main", "check_responses", {proposal_addr:parsedHash.Ok}).then((game) => {
-        let currentGame = JSON.parse(game).Ok;
-        console.log("current game", currentGame);
-
-        if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-          console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-
-          currentGame = new Game;
-          let {players, id} = currentGame;
-          players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
-          id = gameHash;
-          currentGame = {...currentGame, players, id}
-          console.log("currentGame", currentGame);
-
-          createGame();
-        }
-        else {
-          console.log("Two players don't exist for this game.");
-        }
-      });
-    }
-    else{
-        console.log("Failed to Accept Proposal");
-        alert("Error:"+gameHash)
-    }
-
+(function onMount() {
+  // on mount, do the following right away:
+  callHCApi("main", "whoami", {}).then(agent_hash => {
+    author_opponent = JSON.parse(agent_hash).Ok;
+    // set global ref to agent ID
+    whoami = JSON.parse(agent_hash).Ok;
   })
-}
+  .then(() => {
+    const timestamp = 0; // timestamp as number
+    const urlHash = this.window.location.href;
+    const proposal_addr = urlHash.split("?")[1].split("=")[1];
+    console.log("proposal_addr : ", proposal_addr);
+
+    callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+      let parsedHash = JSON.parse(gameHash);
+      if(!parsedHash.Err){
+        callHCApi("main", "check_responses", {proposal_addr:parsedHash.Ok}).then((game) => {
+          let currentGame = JSON.parse(game).Ok;
+          console.log("current game", currentGame);
+
+          if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
+            console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+            currentGame = new Game;
+            let {players, id} = currentGame;
+            players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
+            id = gameHash;
+            currentGame = {...currentGame, players, id}
+            console.log("currentGame", currentGame);
+
+            createGame();
+          }
+          else {
+            console.log("Notice: Two players don't exist for this game.");
+              alert("Notice: Two players don't exist for this game.");
+          }
+        });
+      }
+      else{
+          console.log("Failed to Accept Proposal");
+          alert("Error:"+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed)
+      }
+    })
+  });
+})();
 
 // on mount fetch game info
 const createGame = () => {
@@ -91,6 +97,8 @@ const createGame = () => {
      const game = JSON.parse(gameHash).Ok;
      console.log("Current came", game);
      console.log("Following game has started: ", currentGame);
+
+     setBoard();
    });
  }
 
@@ -115,13 +123,14 @@ const createGame = () => {
       // console.log("items0: ",items[i][0]);
       // console.log("items1: ",items[i][1]);
       document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="red-piece"></span>`;
+      // document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="black-piece"></span>`;
     }
   }
 
-  $('#checkerTable').on('click','td',function() {
-    onMount();
-    setBoard();
-  });
+  // $('#checkerTable').on('click','td',function() {
+  //   onMount();
+  //   setBoard();
+  // });
 
 /////////////////////////////
 // game movement logic:
