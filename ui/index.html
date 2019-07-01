@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="manifest" href="/assets/manifest.json">
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+
+    <title>Holochain Game Lobby</title>
+
+    <!-- CSS reset Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
+
+    <!-- Bootstrap Stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Bootswatch Stylesheet -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/sketchy/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Lobby CSS -->
+    <link rel="stylesheet" href="/styles/lobby.css">
+
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div id="header-img" class="row jumbotron bg-info">
+        <header class="col-md-12">
+          <h1 class="text-light">Welcome to the Holochain Checkers Game Suite</h1>
+          <hr class="text-primary" />
+          <h4 class="text-primary">To play either select an proposed game, or create a new game proposal and await a second user to join as your opponent. Only 2 players per a game are allowed. <br/> Good luck!</h4>
+        </header>
+      </div>
+
+      <div id="lets-play" class="row jumbotron text-white bg-success">
+        <div id="welcome-zone" class="row">
+          <div class="col-md-12 form-group">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newGameModal">
+              Create New Game
+            </button>
+          </div>
+
+        <!-- Start of Modal -->
+        <div class="modal fade" id="newGameModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-dark" id="newGameModalTitle">Add Game</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="name-input">Game Name</label>
+                    <input id="nameInput" type="text" class="form-control">
+                  </div>
+                  <div class="text-center">
+                    <button id="addGameButton" class="btn btn-lg" type="submit">Submit</button>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of Modal -->
+
+        <div id="score-board" class="container-fluid jumbotron bg-light">
+          <div class="row">
+            <div class="col-md-12">
+              <h1 class="text-center text-dark">Proposed Games</h1>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Game Name</th>
+                    <th scope="col">Player 1 Name</th>
+                    <th scope="col">Join</th> <!-- col in which to place btn to join new game -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id="pending-game"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="header-img" class="row jumbotron text-white bg-info">
+      <div class="col-md-12">
+        <h6 class="text-center text-light" style="margin:20px;">Holochain Checkers Game | Dev Camp June 2019</h6>
+      </div>
+    </div>
+  </div>
+
+    <!-- jQuery Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap CSS Framework JS Script -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Lobby Script File -->
+    <script src="/logic/lobby.js" type="module">></script>
+
+  </body>
+</html>
