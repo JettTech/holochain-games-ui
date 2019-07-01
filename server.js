@@ -11,7 +11,7 @@ const bodyParser = require("body-parser")
 const app = express();
 const urlEncoderParser = bodyParser.urlencoded({extended:true});
 
-const PORT = process.env.PORT || 3301
+const PORT = process.env.PORT || 3002
 
 
 // Route Settings
