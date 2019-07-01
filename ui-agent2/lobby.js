@@ -1,4 +1,4 @@
-const WS_PORT = "ws://localhost:3302";
+const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {

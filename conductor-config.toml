@@ -5,12 +5,12 @@ name = "Agent 1"
 public_address = "HcScIK3iACtDb6hch75SwfPJ9xEa8nkwjdxen5OMbhtkgwoaheSqr6RrM796sqi"
 keystore_file = "./agent1.keystore"
 # -----------  Agents  -----------
-# [[agents]]
-# id = "test_agent2"
-# name = "Agent 2"
-# public_address = "HcScj3nWSkA7BuacmvrI56rRBhd89CqfvvIVPnxBkmbpwbd6WQ6mK9c6M6rrh3z"
-# keystore_file = "./agent2.keystore"
-#
+[[agents]]
+id = "test_agent2"
+name = "Agent 2"
+public_address = "HcScj3nWSkA7BuacmvrI56rRBhd89CqfvvIVPnxBkmbpwbd6WQ6mK9c6M6rrh3z"
+keystore_file = "./agent2.keystore"
+
 
 # -----------  DNA  -----------
 [[dnas]]
@@ -31,16 +31,16 @@ file = "app_spec.log"
 type = "memory"
 path = "tmp-storage"
 
-# [[instances]]
-# id = "holochain-checkers-instance-two"
-# dna = "holochain_checkers"
-# agent = "test_agent2"
-# [instances.logger]
-# type = "simple"
-# file = "app_spec.log"
-# [instances.storage]
-# type = "memory"
-# path = "tmp-storage"
+[[instances]]
+id = "holochain-checkers-instance-two"
+dna = "holochain_checkers"
+agent = "test_agent2"
+[instances.logger]
+type = "simple"
+file = "app_spec.log"
+[instances.storage]
+type = "memory"
+path = "tmp-storage"
 
 
 [[interfaces]]
@@ -48,19 +48,19 @@ id = "checkers_websocket_interface1"
 admin = true
 [interfaces.driver]
 type = "websocket"
-port = 30001
+port = 3001
 [[interfaces.instances]]
 id = "holochain-checkers-instance"
 
 
-# [[interfaces]]
-# id = "checkers_websocket_interface2"
-# admin = true
-# [interfaces.driver]
-# type = "websocket"
-# port = 3302
-# [[interfaces.instances]]
-# id = "holochain-checkers-instance-two"
+[[interfaces]]
+id = "checkers_websocket_interface2"
+admin = true
+[interfaces.driver]
+type = "websocket"
+port = 3002
+[[interfaces.instances]]
+id = "holochain-checkers-instance-two"
 
 
 # -----------  UI Agent 1 -----------
@@ -76,16 +76,16 @@ port = 8800
 dna_interface = "checkers_websocket_interface1"
 
 # -----------  UI Agent2  -----------
-# [[ui_bundles]]
-# id = "main2"
-# root_dir = "./ui-agent2"
-# hash = "Qm000"
-#
-# [[ui_interfaces]]
-# id = "ui-interface2"
-# bundle = "main2"
-# port = 9300
-# dna_interface = "checkers_websocket_interface2"
+[[ui_bundles]]
+id = "main2"
+root_dir = "./ui-agent2"
+hash = "Qm000"
+
+[[ui_interfaces]]
+id = "ui-interface2"
+bundle = "main2"
+port = 9300
+dna_interface = "checkers_websocket_interface2"
 
 
 # -----------  Networking  -----------
