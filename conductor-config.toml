@@ -2,9 +2,8 @@
 [[agents]]
 id = "test_agent1"
 name = "Agent 1"
-public_address = "HcSCIh9pWS9pqtzc3aZv86oBzr95JHgyvcwJH7kmHiryozhvSuvRdTAvj46rmaa"
-keystore_file = "/home/lisa/.config/holochain/keys/HcSCIh9pWS9pqtzc3aZv86oBzr95JHgyvcwJH7kmHiryozhvSuvRdTAvj46rmaa"
-
+public_address = "HcSCIUKodbWktcbmwyAaVrYnsbadi6b9sOV9D4ZoE8i333ZtcGw38Jn3U6u63qi"
+keystore_file = "./agent1.keystore"
 
 # -----------  DNA  -----------
 [[dnas]]
@@ -28,9 +27,9 @@ id = "checkers_websocket_interface"
 admin = true
 [interfaces.driver]
 type = "websocket"
-port = 8080
+port = 3301
 [[interfaces.instances]]
-id = "holochain-checkers-instance"
+id = "holochain-checkers-instance-interface"
 
 [[interfaces]]
 id = "checkers_http_interface"
@@ -38,19 +37,19 @@ id = "checkers_http_interface"
 type = "http"
 port = 4401
 [[interfaces.instances]]
-id = "holochain-checkers-instance"
+id = "holochain-checkers-instance-interface"
 
 # -----------  UI  -----------
 [[ui_bundles]]
 id = "main"
-root_dir = "./ui"
+root_dir = "./ui-src"
 hash = "Qm000"
 
 [[ui_interfaces]]
 id = "ui-interface"
 bundle = "main"
 port = 3002
-dna_interface = "checkers_websocket_interface"
+dna_interface = "holochain-checkers-instance-interface"
 
 # -----------  Networking  -----------
 # [network]

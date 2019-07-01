@@ -18,13 +18,24 @@ const gameMsgs = {
   five: "You Lost."
 }
 
+class Game {
+  constructor() {
+    this.id = "game_hash",
+    this.timestamp= 0,
+    this.name = "",
+    this.players = {
+      player1: "",
+      player2: ""
+    };
+  }
+}
+
+let currentGame = {};
 let player1State = gameMsgs.one;
 let player2State = gameMsgs.two;
 ////////
 
 function onMount() {
-  const timestamp = Date.now(); // timestamp as number
-  // const timestamp = new Date().toISOString(); //timestamp as string
   const urlHash = this.window.location.href;
   console.log("urlHash : ", urlHash);
   const proposal_addr = urlHash.split("?")[1].split("=")[1];
@@ -32,32 +43,37 @@ function onMount() {
 
   callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
     callHCApi("main", "check_responses", {proposal_addr:gameHash}).then((game) => {
-      let currentGame = JSON.parse(game).Ok;
-      console.log("current game", currentGame);
-      if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-        console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-        createGame();
-      }
-      else {
-        console.log("Two players don't exist for this game.");
-      }
+      let chosenGame = JSON.parse(game).Ok;
+      console.log("current game", chosenGame);
+
+      currentGame = new Game;
+      let {players, id} = currentGame;
+      players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
+      id = gameHash;
+      currentGame = {...currentGame, players, id}
+      console.log("currentGame", currentGame);
+
+      createGame();
     });
   })
 }
 
 // on mount fetch game info
 const createGame = () => {
-   callHCApi("main", "create_game", {opponent, timestamp}).then(gameHash => {
+// supply game board with agent icons
+  // agent 1
+  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
+  // agent 2
+  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
 
-     const proposal = JSON.parse(gameHash).Ok.proposal;
+  // game status for both players
+  document.getElementById("player1State").innerHTML("<div>" + player1State + "</div>")
+  document.getElementById("player2State").innerHTML("<div>" + player2State  + "</div>")
 
-     // supply game board with agent icons
-     $("#player1Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
-     $("#player2Icon").append("<svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg>")
-
-
-     $("#player1State").append("<div>" + player1State + "</div>")
-     $("#player2State").append("<div>" + player2State  + "</div>")
+  callHCApi("main", "create_game", {opponent:newGame.player.player2, timestamp:0}).then(gameHash => {
+     const game = JSON.parse(gameHash).Ok;
+     console.log("Current came", game);
+     console.log("Following game has started: ", currentGame);
    });
  }
 
