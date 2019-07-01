@@ -1,5 +1,4 @@
 import callHCApi from "../utils/hc-api-calls.js";
-// var {callHCApi} = require("./utils/hc-api-calls");
 
 $(document).ready(function($) {
   /////////////
@@ -21,7 +20,7 @@ $(document).ready(function($) {
     console.log("pendingGames returned from back (is this the array of hashes only ?? ): ", pendingGames);
 
     pendingGames.map(proposal => {
-      $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + proposal.entry.agent+ "</td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
+      $("#pending-game >tbody").append("<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='80' height='80'></svg></td><td><button id='startGameButton' data-hash='" + proposal.address + "'>Join Game</button></td></tr>");
     })
 
     // const game = this.pendingGames.find(proposal => {
