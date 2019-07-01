@@ -4,7 +4,6 @@
   "main": "server.js",
   "description": "A game lobby and checkers ui to pair with holochain chess DNA.",
   "scripts": {
-    "hc:start": "holochain -c ./conductor-config.toml",
     "hc:start:agent1": "holochain -c ./conductor-config-agent1.toml",
     "hc:start:agent2": "holochain -c ./conductor-config-agent2.toml",
     "web": "hc web",
