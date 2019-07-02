@@ -103,7 +103,6 @@ const createGame = (currentGame) => {
      const game = JSON.parse(gameHash).Ok;
      console.log("Current came", game);
      console.log("Following game has started: ", currentGame);
-
      boardState(game);
    });
  }
@@ -112,7 +111,6 @@ const boardState = (game_address) => {
 
     callHCApi("main", "get_state", {game_address}).then(state => {
       refactoredState = refactorState(state);
-         // setBoard();
      });
 
 }
@@ -121,19 +119,14 @@ const refactorState = (state) => {
   ps = JSON.parse(state).Ok;
   document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.winner + "</div>"
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + ps.player_2.winner  + "</div>"
-
-  console.log("PS:",ps);
   p1 = refactorPieces(ps.player_1.pieces)
   p2 = refactorPieces(ps.player_2.pieces)
-  console.log("p1:",p1);
-  console.log("p2:",p2);
   setBoardP1(p1);
   setBoardP2(p2);
 }
 const refactorPieces = (p) => {
   let r=[];
   for(i=0;i<p.length;i++){
-    console.log("PP:",p[i]);
     r.push([p[i].x,p[i].y])
   }
   return r;
