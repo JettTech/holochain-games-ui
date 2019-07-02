@@ -80,17 +80,18 @@ $(document).ready(function($) {
             let parsedHash = JSON.parse(gameHash);
             if(!parsedHash.Err){
               console.log("ParsedHash exisits - NO error ", parsedHash);
+               myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+               $( "#my-pending-games" ).append( myAuthoredGames );
 
-               myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
             }
             else {
               console.log("ERROR - NO ParsedHash exists", parsedHash);
-
-              myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+              myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+              console.log("LOGGING: ",myAuthoredGames);
+              $( "#my-pending-games" ).append( myAuthoredGames );
             }
           });
         })
-        document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
 
       //////////////////////////////////////////////////////////////////////////////////////
         const otherGames = pendingGames.filter(proposal => {
