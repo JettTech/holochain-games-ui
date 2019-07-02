@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3002";
-const INSTANCE_ID = "holochain-checkers-instance-two";
+const WS_PORT = "ws://localhost:3001";
+const INSTANCE_ID = "holochain-checkers-instance";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -79,9 +79,13 @@ $(document).ready(function($) {
           callHCApi("main", "accept_proposal", {proposal_addr: proposal.address, created_at: 0}).then((gameHash) => {
             let parsedHash = JSON.parse(gameHash);
             if(!parsedHash.Err){
-             myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+              console.log("ParsedHash exisits - NO error ", parsedHash);
+
+               myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
             }
             else {
+              console.log("ERROR - NO ParsedHash exists", parsedHash);
+
               myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
             }
           });
@@ -100,7 +104,6 @@ $(document).ready(function($) {
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
-      // accept porposal, and if pass validation withot errors, proceed to creating the game!
     })
   })
 
