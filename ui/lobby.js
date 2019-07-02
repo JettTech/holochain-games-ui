@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3001";
-const INSTANCE_ID = "holochain-checkers-instance";
+const WS_PORT = "ws://localhost:3002";
+const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {

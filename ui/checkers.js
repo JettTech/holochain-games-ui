@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3001";
-const INSTANCE_ID = "holochain-checkers-instance";
+const WS_PORT = "ws://localhost:3002";
+const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -21,7 +21,7 @@ const gameMsgs = {
 let whoami = "";
 let amAuthor = false;
 let player1Turn = true;
-let currentGame = {};
+let presentGame = {};
 
 class Game {
   constructor() {
@@ -70,18 +70,20 @@ class Game {
       if(!parsedHash.Err){
         callHCApi("main", "check_responses", {proposal_addr}).then((game) => {
           let currentGame = JSON.parse(game).Ok[0];
-          console.log("current game", currentGame);
+          console.log("current proposed game", currentGame);
 
           if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
             console.log("Two players exist, now moving to create_game. (Player: 1, 2 shown.) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+
             presentGame = new Game;
             let {players, id} = presentGame;
             players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
             id = JSON.parse(gameHash).Ok;
             presentGame = {players, id}
-            console.log("present Game check", presentGame);
+            console.log("local state record: presentGame", presentGame);
+            console.log("going to create currentGame: ", currentGame);
 
-            createGame(presentGame);
+            createGame(currentGame);
           }
           else {
               alert("Notice: Two players don't exist for this game.");
@@ -107,23 +109,25 @@ const rerenderGameState = (agent1state, agent2state) => {
 
 // on mount fetch game info
 const createGame = (currentGame) => {
-// supply game board with agent icons
-  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
-  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
+  console.log("currentgame to create : ", currentGame);
 
+// supply game board with agent icons
+  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.entry.player_1);
+  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.entry.player_2);
   // Update game status for both players
   rerenderGameState(gameMsgs.one, gameMsgs.two);
 
   if(amAuthor === true) {
     // If player is game author:
-    const myOpponent = currentGame.players.player_2 !== whoami ? currentGame.players.player_2 : currentGame.players.player_1;
+    const myOpponent = currentGame.entry.player_2 !== whoami ? currentGame.entry.player_2 : currentGame.entry.player_1;
     callHCApi("main", "get_game_hash", {opponent:myOpponent, timestamp:0}).then(gameHash => {
+      console.log("gameHash : ", gameHash);
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err){
-        const game = JSON.parse(parsedGameHash).Ok;
-        console.log("Current came", game);
-        console.log("Following game has started: ", currentGame);
-
+        const game = parsedGameHash.Ok;
+        console.log("Following game has started: ", game);
+        // console.log("Current game check :", currentGame);
+        // set board scene for player 1
         boardState(game);
       }
       else{
@@ -134,13 +138,15 @@ const createGame = (currentGame) => {
   }
   else {
     // If player is NOT game author:
-    const myOpponent = currentGame.players.player_2 === whoami ? currentGame.players.player_2 : currentGame.players.player_1;
+    const myOpponent = currentGame.entry.player_1 !== whoami ? currentGame.entry.player_1 : currentGame.entry.player_2;
     callHCApi("main", "create_game", {opponent: myOpponent, timestamp:0}).then(gameHash => {
+      console.log("gameHash : ", gameHash);
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err) {
-        const game = JSON.parse(parsedGameHash).Ok;
-        console.log("Current came", game);
-        console.log("Following game has started: ", currentGame);
+        const game = parsedGameHash.Ok;
+        console.log(" Following game has started:", game);
+        // console.log("Current game check :", currentGame);
+        // set board scene for player 2
         boardState(game);
       }
       else{
@@ -193,7 +199,7 @@ const refactorState = (state) => {
   setBoardP1(p1);
   setBoardP2(p2);
 }
-const refactorPieces = (p) => {
+const refactorPieces = (pieces) => {
   let refactoredArray=[];
   for(i=0;i<pieces.length;i++){
     refactoredArray.push([pieces[i].x,pieces[i].y])
