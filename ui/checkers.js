@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3001";
-const INSTANCE_ID = "holochain-checkers-instance";
+const WS_PORT = "ws://localhost:3002";
+const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -52,23 +52,22 @@ let player2State = gameMsgs.two;
     callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
       let parsedHash = JSON.parse(gameHash);
       if(!parsedHash.Err){
-        callHCApi("main", "check_responses", {proposal_addr:parsedHash.Ok}).then((game) => {
-          let currentGame = JSON.parse(game).Ok;
+        callHCApi("main", "check_responses", {proposal_addr}).then((game) => {
+          let currentGame = JSON.parse(game).Ok[0];
           console.log("current game", currentGame);
 
           if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
             console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-            currentGame = new Game;
-            let {players, id} = currentGame;
-            players = {...players, player1: chosenGame.entry.player_1, player2: chosenGame.entry.player_2 };
-            id = gameHash;
-            currentGame = {...currentGame, players, id}
-            console.log("currentGame", currentGame);
+            presentGame = new Game;
+            let {players, id} = presentGame;
+            players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
+            id = JSON.parse(gameHash).Ok;
+            presentGame = {players, id}
+            console.log("present Game check", presentGame);
 
-            createGame();
+            createGame(presentGame);
           }
           else {
-            console.log("Notice: Two players don't exist for this game.");
               alert("Notice: Two players don't exist for this game.");
           }
         });
@@ -82,7 +81,7 @@ let player2State = gameMsgs.two;
 })();
 
 // on mount fetch game info
-const createGame = () => {
+const createGame = (currentGame) => {
 // supply game board with agent icons
   // agent 1
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
@@ -90,17 +89,35 @@ const createGame = () => {
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
 
   // game status for both players
-  document.getElementById("player1State").innerHTML("<div>" + player1State + "</div>")
-  document.getElementById("player2State").innerHTML("<div>" + player2State  + "</div>")
+  document.getElementById("player1State").innerHTML="<div>" + player1State + "</div>"
+  document.getElementById("player2State").innerHTML="<div>" + player2State  + "</div>"
 
-  callHCApi("main", "create_game", {opponent:newGame.player.player2, timestamp:0}).then(gameHash => {
+  callHCApi("main", "create_game", {opponent:currentGame.players.player2, timestamp:0}).then(gameHash => {
      const game = JSON.parse(gameHash).Ok;
      console.log("Current came", game);
      console.log("Following game has started: ", currentGame);
 
-     setBoard();
+     boardState(game);
    });
  }
+
+const boardState = (game_address) => {
+
+    callHCApi("main", "get_state", {game_address}).then(state => {
+      console.log("Board State: ",state);
+      refactoredState = refactorState(state);
+         // setBoard();
+     });
+
+}
+
+const refactorState = (state) => {
+  ps = JSON.parse(state).Ok;
+  console.log("PS:",ps);
+
+  p1 = ps.player_1.pieces;
+  p2 = ps.player_2.pieces;
+}
 
   // initialize board spaces:
   function setBoard(){

@@ -79,7 +79,7 @@ $(document).ready(function($) {
 
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='60' height='60'></svg></td><td><a id='startGameButton' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
