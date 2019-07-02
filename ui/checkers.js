@@ -15,8 +15,11 @@ const gameMsgs = {
   two: "Await Player 1",
   three: "Await Player 2",
   four: "You Won!",
-  five: "You Lost."
+  five: "You Lost.",
+  six: "N/A"
 }
+let whoami = "";
+let currentGame = {};
 
 class Game {
   constructor() {
@@ -29,11 +32,6 @@ class Game {
     };
   }
 }
-
-let whoami = "";
-let currentGame = {};
-let player1State = gameMsgs.one;
-let player2State = gameMsgs.two;
 ////////
 
 (function onMount() {
@@ -48,6 +46,9 @@ let player2State = gameMsgs.two;
     const urlHash = this.window.location.href;
     const proposal_addr = urlHash.split("?")[1].split("=")[1];
     console.log("proposal_addr : ", proposal_addr);
+
+    // Set game status for both players
+    rerenderGameState(six, six);
 
     callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
       let parsedHash = JSON.parse(gameHash);
@@ -74,24 +75,28 @@ let player2State = gameMsgs.two;
         });
       }
       else{
-          console.log("Failed to Accept Proposal");
-          alert("Error:"+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed)
+        console.log("Failed to Accept Proposal. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+        alert("\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed)
       }
     })
   });
 })();
 
+const rerenderGameState = (number1, number2) => {
+  const agent1stateNumber = gameMsgs.number1;
+  const agent2stateNumber = gameMsgs.number2;
+  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1stateNumber + "</div>"
+  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2stateNumber  + "</div>" 
+}
+
 // on mount fetch game info
 const createGame = () => {
 // supply game board with agent icons
   // agent 1
+  console.log("currentGame.players.player1 : ", currentGame.players.player1);
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
   // agent 2
-  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
-
-  // game status for both players
-  document.getElementById("player1State").innerHTML("<div>" + player1State + "</div>")
-  document.getElementById("player2State").innerHTML("<div>" + player2State  + "</div>")
+  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2 || "agent2");
 
   callHCApi("main", "create_game", {opponent:newGame.player.player2, timestamp:0}).then(gameHash => {
      const game = JSON.parse(gameHash).Ok;

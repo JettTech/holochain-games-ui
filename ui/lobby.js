@@ -1,3 +1,4 @@
+import { getDisplayName } = './utils/helperfns';
 const WS_PORT = "ws://localhost:3001";
 const INSTANCE_ID = "holochain-checkers-instance";
 
@@ -79,7 +80,7 @@ $(document).ready(function($) {
 
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><svg data-jdenticon-value='" + proposal.entry.agent + "' width='60' height='60'></svg></td><td><a id='startGameButton' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
@@ -102,28 +103,28 @@ $(document).ready(function($) {
     addNewGame();
   });
 
-  $("#startGameButton").on("click", (newGame) => {
-    if(newGame.players.player_1 && newGame.players.player_2){
-      console.log("two players exist.. moving to current Gameboard... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-      //go to checkers game page
-      const gameHash = gameHash;
-      console.console.log("gameHash");
-      const currentURL = window.location.origin;
-      $.post(currentURL + "/checkers?game="+gameHash, currentGame, function(data, status){
-        console.log("Going to play offered checkers game with following info : ", data, status);
-      });
-    }
-    else if(newGame.players.player_1 && !newGame.players.player_2 && whoami !== "" && newGame.players.player_1 === whoami){
-      errorMessage = "You are not the owner of this game; and two players are not currently registered to play.";
-      $('#alertMessage').html(errorMessage);
-      $('#alertModal').modal("show");
-    }
-    else {
-      errorMessage = "You are not the owner of this game; and two players are not currently registered to play.";
-      $('#alertMessage').html(errorMessage);
-      $('#alertModal').modal("show");
-    }
-  })
+  // $("#startGameButton").on("click", (newGame) => {
+  //   if(newGame.players.player_1 && newGame.players.player_2){
+  //     console.log("two players exist.. moving to current Gameboard... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+  //     //go to checkers game page
+  //     const gameHash = gameHash;
+  //     console.console.log("gameHash");
+  //     const currentURL = window.location.origin;
+  //     $.post(currentURL + "/checkers?game="+gameHash, currentGame, function(data, status){
+  //       console.log("Going to play offered checkers game with following info : ", data, status);
+  //     });
+  //   }
+  //   else if(newGame.players.player_1 && !newGame.players.player_2 && whoami !== "" && newGame.players.player_1 === whoami){
+  //     errorMessage = "You are not the owner of this game; and two players are not currently registered to play.";
+  //     $('#alertMessage').html(errorMessage);
+  //     $('#alertModal').modal("show");
+  //   }
+  //   else {
+  //     errorMessage = "You are not the owner of this game; and two players are not currently registered to play.";
+  //     $('#alertMessage').html(errorMessage);
+  //     $('#alertModal').modal("show");
+  //   }
+  // })
 
 /////////////
 }); // end of file
