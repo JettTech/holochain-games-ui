@@ -76,7 +76,8 @@ $(document).ready(function($) {
 
         let myAuthoredGames = "";
         myGames.forEach(proposal => {
-          callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+          callHCApi("main", "accept_proposal", {proposal_addr: proposal.address, created_at: 0}).then((gameHash) => {
+            let parsedHash = JSON.parse(gameHash);
             if(!parsedHash.Err){
              myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
             }
