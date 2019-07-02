@@ -5,9 +5,8 @@
   "description": "A game lobby and checkers ui to pair with holochain checkers DNA.",
   "scripts": {
     "hc:start": "holochain -c ./conductor-config.toml",
-    "build": "rm -r ui-agent1 && rm -r ui-agent2 && cp -r ui ui-agent1 && cp -r ui ui-agent2",
-    "setagent1": "",
-    "setagent2": "",
+    "build1": "rm -r ui-agent1 && cp -r ui ui-agent1",
+    "build2": "rm -r ui-agent2 && cp -r ui ui-agent2",
     "web": "hc web",
     "test": "test",
     "cy:open": "cypress open",

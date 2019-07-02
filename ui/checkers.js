@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3001";
-const INSTANCE_ID = "holochain-checkers-instance";
+const WS_PORT = "ws://localhost:3002";
+const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -11,15 +11,16 @@ const callHCApi = (zome, funcName, params) => {
 $(document).ready(function(){
 ////////
 const gameMsgs = {
-  one: "Your turn",
+  one: "Currnet Turn",
   two: "Awaiting Opponent",
-  three: "You Resigned",
+  three: "You Resigned.",
   four: "You Won!",
   five: "You Lost.",
   six: "N/A"
 }
 let whoami = "";
 let amAuthor = false;
+let player1Turn = true;
 let currentGame = {};
 
 class Game {
@@ -55,6 +56,10 @@ class Game {
     if(whoami === game_author) {
       amAuthor = true;
       console.log("amAuthor : ", amAuthor);
+      document.getElementById("agent1").innerHTML = 'Me'
+    }
+    else {
+      document.getElementById("agent2").innerHTML = "Me"
     }
     // Set game status for both players
     rerenderGameState(gameMsgs.six, gameMsgs.six);
@@ -95,6 +100,10 @@ class Game {
 })();
 
 const rerenderGameState = (agent1state, agent2state) => {
+  if(agent1state === gameMsgs.one || agent1state === gameMsgs.two){
+    player1Turn === false ? true: false;
+    console.log("player1Turn :", player1Turn);
+  }
   document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
@@ -103,7 +112,6 @@ const rerenderGameState = (agent1state, agent2state) => {
 const createGame = (currentGame) => {
 // supply game board with agent icons
   // agent 1
-  console.log("currentGame.players.player1 : ", currentGame.players.player1);
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
   // agent 2
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
@@ -156,19 +164,46 @@ const boardState = (game_address) => {
 }
 const refactorState = (state) => {
   ps = JSON.parse(state).Ok;
-  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.winner + "</div>"
-  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + ps.player_2.winner  + "</div>"
+  if (ps.player_1.winner){
+    // Update game status for both players
+    rerenderGameState(gameMsgs.four, gameMsgs.five);
+    // document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.winner + "</div>"
+  }
+  else if(ps.player_2.winner){
+    // Update game status for both players
+    rerenderGameState(gameMsgs.five, gameMsgs.four);
+    // document.getElementById("player2State").innerHTML = "<div style='color:black'>" + ps.player_2.winner  + "</div>"
+  }
+ else if(ps.player_1.resigned){
+    // Update game status for both players
+    rerenderGameState(gameMsgs.three, gameMsgs.four);
+    // document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.resigned  + "</div>"
+  }
+  else if(ps.player_2.resigned){
+    // Update game status for both players
+    rerenderGameState(gameMsgs.four, gameMsgs.three);
+    // document.getElementById("player2State").innerHTML = "<div style='color:black'>" + ps.player_2.resigned  + "</div>"
+  }
+  else if(player1Turn === true) {
+    // Update game status for both players
+    rerenderGameState(gameMsgs.two, gameMsgs.one);
+  }
+  else if(player1Turn === false) {
+    // Update game status for both players
+    rerenderGameState(gameMsgs.one, gameMsgs.two);
+  }
+
   p1 = refactorPieces(ps.player_1.pieces)
   p2 = refactorPieces(ps.player_2.pieces)
   setBoardP1(p1);
   setBoardP2(p2);
 }
 const refactorPieces = (p) => {
-  let r=[];
-  for(i=0;i<p.length;i++){
-    r.push([p[i].x,p[i].y])
+  let refactoredArray=[];
+  for(i=0;i<pieces.length;i++){
+    refactoredArray.push([pieces[i].x,pieces[i].y])
   }
-  return r;
+  return refactoredArray;
 }
   // initialize board spaces:
   function setBoardP1(items){
