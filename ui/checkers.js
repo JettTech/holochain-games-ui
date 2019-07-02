@@ -1,5 +1,5 @@
-const WS_PORT = "ws://localhost:3002";
-const INSTANCE_ID = "holochain-checkers-instance-two";
+const WS_PORT = "ws://localhost:3001";
+const INSTANCE_ID = "holochain-checkers-instance";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -12,13 +12,14 @@ $(document).ready(function(){
 ////////
 const gameMsgs = {
   one: "Your turn",
-  two: "Await Player 1",
-  three: "Await Player 2",
+  two: "Awaiting Opponent",
+  three: "You Resigned",
   four: "You Won!",
   five: "You Lost.",
   six: "N/A"
 }
 let whoami = "";
+let amAuthor = false;
 let currentGame = {};
 
 class Game {
@@ -42,14 +43,26 @@ class Game {
     whoami = JSON.parse(agent_hash).Ok;
   })
   .then(() => {
-    const timestamp = 0; // timestamp as number
-    const urlHash = this.window.location.href;
-    const proposal_addr = urlHash.split("?")[1].split("=")[1];
-    console.log("proposal_addr : ", proposal_addr);
-
     // Set game status for both players
     rerenderGameState(gameMsgs.six, gameMsgs.six);
 
+    //grab url vars:
+    const urlHash = this.window.location.href;
+    const urlParirs = urlHash.split("?")[1].split("&");
+    const proposal_addr = urlParirs[0].split("=")[1];
+    const game_author = urlParirs[1].split("=")[1];
+
+    if(whoami === game_author) {
+      amAuthor = true;
+      console.log("amAuthor : ", amAuthor);
+    }
+    // Set game status for both players
+    rerenderGameState(gameMsgs.six, gameMsgs.six);
+
+    // set timestamp to be constant
+    const timestamp = 0; // timestamp as number
+
+    // accept porposal, and if pass validation withot errors, proceed to creating the game!
     callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
       let parsedHash = JSON.parse(gameHash);
       if(!parsedHash.Err){
@@ -81,11 +94,9 @@ class Game {
   });
 })();
 
-const rerenderGameState = (number1, number2) => {
-  const agent1stateNumber = number1;
-  const agent2stateNumber = number2;
-  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1stateNumber + "</div>"
-  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2stateNumber  + "</div>"
+const rerenderGameState = (agent1state, agent2state) => {
+  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
+  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
 
 // on mount fetch game info
@@ -97,24 +108,50 @@ const createGame = (currentGame) => {
   // agent 2
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
 
-  // game status for both players
+  // Update game status for both players
+  rerenderGameState(gameMsgs.one, gameMsgs.two);
 
-  callHCApi("main", "create_game", {opponent:currentGame.players.player2, timestamp:0}).then(gameHash => {
-     const game = JSON.parse(gameHash).Ok;
-     console.log("Current came", game);
-     console.log("Following game has started: ", currentGame);
-     boardState(game);
-   });
+  if(amAuthor === true) {
+    // If player is game author, then the opponent is player 2.
+    callHCApi("main", "create_game", {opponent:currentGame.players.player2, timestamp:0}).then(gameHash => {
+      let parsedGameHash = JSON.parse(gameHash);
+      if(!parsedGameHash.Err){
+        const game = JSON.parse(parsedGameHash).Ok;
+        console.log("Current came", game);
+        console.log("Following game has started: ", currentGame);
+
+        boardState(game);
+      }
+      else{
+        console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+        alert("Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+      }
+    });
+  }
+  else {
+    // If player is NOT game author, then the opponent is player 1.
+    callHCApi("main", "get_game_hash", {opponent:currentGame.players.player1, timestamp:0}).then(gameHash => {
+      let parsedGameHash = JSON.parse(gameHash);
+      if(!parsedGameHash.Err) {
+        const game = JSON.parse(parsedGameHash).Ok;
+        console.log("Current came", game);
+        console.log("Following game has started: ", currentGame);
+        boardState(game);
+      }
+      else{
+        console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+        alert("Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+      }
+    });
+  }
+
  }
 
 const boardState = (game_address) => {
-
     callHCApi("main", "get_state", {game_address}).then(state => {
       refactoredState = refactorState(state);
      });
-
 }
-
 const refactorState = (state) => {
   ps = JSON.parse(state).Ok;
   document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.winner + "</div>"
@@ -142,11 +179,6 @@ const refactorPieces = (p) => {
       document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="black-piece"></span>`;
     }
   }
-
-  // $('#checkerTable').on('click','td',function() {
-  //   onMount();
-  //   setBoard();
-  // });
 
 /////////////////////////////
 // game movement logic:
