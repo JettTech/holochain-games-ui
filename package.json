@@ -21,8 +21,5 @@
   "bugs": {
     "url": "https://github.com/JettTech/holochain-games-ui/issues"
   },
-  "homepage": "https://github.com/JettTech/holochain-games-ui#readme",
-  "dependencies": {
-    "rimraf": "^2.6.3"
-  }
+  "homepage": "https://github.com/JettTech/holochain-games-ui#readme"
 }

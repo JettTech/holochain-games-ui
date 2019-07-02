@@ -1,4 +1,3 @@
-import { getDisplayName } = './utils/helperfns';
 const WS_PORT = "ws://localhost:3001";
 const INSTANCE_ID = "holochain-checkers-instance";
 
@@ -7,6 +6,15 @@ const callHCApi = (zome, funcName, params) => {
       return await callZome(INSTANCE_ID, zome, funcName)(params)
   })
   return response;
+}
+
+const getDisplayName = (agentHash) => {
+  if (agentHash.length > 15 ) {
+    return agentHash.substring(0,15) + "...";
+  }
+  else {
+    return agentHash;
+  }
 }
 
 
@@ -68,7 +76,7 @@ $(document).ready(function($) {
 
         let myAuthoredGames = "";
         myGames.forEach(proposal => {
-          myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
 
@@ -80,7 +88,7 @@ $(document).ready(function($) {
 
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
