@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="manifest" href="/assets/manifest.json">
-    <link rel="shortcut icon" href="/assets/favicon.ico">
+    <link rel="manifest" href="./utils/manifest.json">
+    <link rel="shortcut icon" href="./assets/favicon.ico">
 
     <title>Holochain Game Lobby</title>
 
@@ -27,12 +27,26 @@
   </head>
 
   <body>
+    <!-- Start of Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="modal-content">
+          <h3 class="modal-title" id="alertModalLabel">Alert</h3>
+          <div class="modal-body" id="alertMessage"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Emd of Alert Modal -->
+
     <div class="container-fluid">
       <div id="header-img" class="row jumbotron bg-info">
         <header class="col-md-12">
           <h1 class="text-light">Welcome to the Holochain Checkers Game Suite</h1>
           <hr class="text-primary" />
-          <h4 class="text-primary">To play either select an proposed game, or create a new game proposal and await a second user to join as your opponent. Only 2 players per a game are allowed. <br/> Good luck!</h4>
+          <h4 class="text-primary">To play either select an proposed game, or create a new game proposal and await a second user to join as your opponent.<br/> <br/> Only 2 players per a game are allowed. <br/> <br/> Good luck!</h4>
         </header>
       </div>
 
@@ -56,7 +70,7 @@
                 <form>
                   <div class="form-group">
                     <label for="name-input">Game Name</label>
-                    <input id="nameInput" type="text" class="form-control">
+                    <input id="nameInput" type="text" class="form-control" placeholder="game name">
                   </div>
                   <div class="text-center">
                     <button id="addGameButton" class="btn btn-primary btn-lg" type="submit">Submit</button>
@@ -67,8 +81,25 @@
           </div>
         </div>
         <!-- End of Modal -->
-
-        <div id="score-board" class="container-fluid jumbotron bg-light">
+        <div id="authored-games-board" class="container-fluid jumbotron bg-light">
+          <div class="row">
+            <div class="col-md-12">
+              <h1 class="text-center text-dark">Authored Games</h1>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Game Name</th>
+                    <th scope="col">Join Game</th>
+                  </tr>
+                </thead>
+                <tbody id="my-pending-games"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          </br>
+          </br>
+        <div id="proposed-games-board" class="container-fluid jumbotron bg-light">
           <div class="row">
             <div class="col-md-12">
               <h1 class="text-center text-dark">Proposed Games</h1>
@@ -76,15 +107,10 @@
                 <thead>
                   <tr>
                     <th scope="col">Game Name</th>
-                    <th scope="col">Player 1 Icon</th>
-                    <th scope="col">Join</th> <!-- col in which to place btn to join new game -->
-                  </tr>
+                    <th scope="col">Author Hash</th>
+                    <th scope="col">Join Game</th>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td id="pending-game"></td>
-                  </tr>
-                </tbody>
+                <tbody id="pending-games"></tbody>
               </table>
             </div>
           </div>
@@ -99,6 +125,9 @@
     </footer>
   </div>
 
+  <!-- ======================================================================= -->
+                            <!-- SCRIPTS -->
+  <!-- ======================================================================= -->
     <!-- jQuery Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -109,129 +138,143 @@
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1" async></script>
 
     <!-- NPM HC Web Client Script-->
-    <script type="text/javascript" src="/hc-web-client.min.js"></script>
+    <script type="text/javascript" src="/utils/hc-web-client.min.js"></script>
 
     <!-- Lobby Script File -->
     <script type="text/javascript" src="/lobby.js" ></script>
 
   </body>
-<style media="screen">
-body {
-  background-color: #052735 !important;
-  box-sizing: border-box;
-  margin: 0 auto;
-  text-align: center;
-}
 
-.affix {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 99999 !important;
-}
+  <!-- ======================================================================== -->
+                            <!-- STYLING -->
+  <!-- ======================================================================== -->
+  <style media="screen">
+    body {
+      background-color: #052735 !important;
+      box-sizing: border-box;
+      margin: 0 auto;
+      text-align: center;
+    }
 
-#header-img {
-  margin-top: 15px;
-  height: 100%;
-}
+    .affix {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 99999 !important;
+    }
 
-.jumbotron {
-  padding: 2rem;
-}
+    #header-img {
+      margin-top: 15px;
+      height: 100%;
+    }
 
-h1 {
-  padding: 15px;
-  font-size: 36px;
-  text-align: center;
-}
+    .jumbotron {
+      padding: 2rem;
+    }
 
-h2 {
-  font-size: 24px;
-  width: 75%;
-  margin: 25px auto;
-  text-align: center;
-}
+    h1 {
+      padding: 15px;
+      font-size: 36px;
+      text-align: center;
+    }
 
-h4 {
-  text-align: center;
-  margin: 20px 50px;
-}
+    h2 {
+      font-size: 24px;
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
 
-hr {
- background-color: white;
- width: 60%;
-}
+    h4 {
+      text-align: center;
+      margin: 20px 50px;
+    }
 
-li {
-  color: white;
-}
+    hr {
+     background-color: white;
+     width: 60%;
+    }
 
-input {
-  background-color: #fffcf7;
-}
+    li {
+      color: white;
+    }
 
-#navbarColor03 {
-   justify-content: end;
-}
+    input {
+      background-color: #fffcf7;
+    }
 
-#lets-play {
-  width: 100%;
-  margin: 0 auto;
-  padding-bottom: 50px;
-  padding-top: 0px;
-  border: 1px solid #dee2e6;
-}
+    #navbarColor03 {
+       justify-content: end;
+    }
 
-#score-board {
-  width: 100%;
-  margin: 0 auto;
-  margin: 0px;
-  padding: 0px;
-  border: 1px solid #dee2e6;
-}
+    #lets-play {
+      width: 100%;
+      margin: 0 auto;
+      padding-bottom: 50px;
+      padding-top: 0px;
+      border: 1px solid #dee2e6;
+    }
 
-/*/=====================================================
-   Welcome Instrction Zone Styling (swap)
-=====================================================/*/
+    /*/---------------------------------------------------
+       Welcome Instrction Zone Styling (swap)
+    ---------------------------------------------------/*/
 
-#welcome-zone {
-  width: 75%;
-  margin: 25px auto;
-  text-align: center;
-}
+    #welcome-zone {
+      width: 75%;
+      margin: 25px auto;
+      text-align: center;
+    }
 
-#welcome-zone input {
-  width: 60%;
-  height: 50px;
-  font-size: 26px;
-  margin: 0 auto;
-}
+    #welcome-zone input {
+      width: 60%;
+      height: 50px;
+      font-size: 26px;
+      margin: 0 auto;
+    }
 
-#welcome-zone button {
-  margin-top: 15px;
-  font-size: 22px;
-}
+    #welcome-zone button {
+      margin-top: 15px;
+      font-size: 22px;
+    }
 
-@media only screen and (max-width: 474px) {
-  input#username {
-    font-size: 1.25em;
-  }
-}
+    @media only screen and (max-width: 474px) {
+      input#username {
+        font-size: 1.25em;
+      }
+    }
 
 
-/*/=====================================================
-  Pending Gameboard Styling
-=====================================================/*/
-.table th, .table td {
-  background: transparent;
-}
+    /*/---------------------------------------------------
+      Pending Gameboard Styling
+    ---------------------------------------------------/*/
+    .table th, .table td {
+      background: transparent;
+    }
 
-/* tr,
-th,
-td {
-  text-align: center;
-} */
+    #startGameButton {
+      text-decoration: none;
+      background: #28a745;
+      color:#ffffff;
+      width: 80px;
+    }
 
-</style>
+    #authored-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+    #proposed-games-board {
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 5px;
+      padding: 0px;
+      border: 1px solid #dee2e6;
+    }
+
+
+  </style>
 
 </html>
