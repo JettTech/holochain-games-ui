@@ -108,9 +108,7 @@ const rerenderGameState = (agent1state, agent2state) => {
 // on mount fetch game info
 const createGame = (currentGame) => {
 // supply game board with agent icons
-  // agent 1
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player1);
-  // agent 2
   document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.players.player2);
 
   // Update game status for both players
@@ -119,7 +117,7 @@ const createGame = (currentGame) => {
   if(amAuthor === true) {
     // If player is game author:
     const myOpponent = currentGame.players.player_2 !== whoami ? currentGame.players.player_2 : currentGame.players.player_1;
-    callHCApi("main", "create_game", {opponent:myOpponent, timestamp:0}).then(gameHash => {
+    callHCApi("main", "get_game_hash", {opponent:myOpponent, timestamp:0}).then(gameHash => {
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err){
         const game = JSON.parse(parsedGameHash).Ok;
@@ -137,7 +135,7 @@ const createGame = (currentGame) => {
   else {
     // If player is NOT game author:
     const myOpponent = currentGame.players.player_2 === whoami ? currentGame.players.player_2 : currentGame.players.player_1;
-    callHCApi("main", "get_game_hash", {opponent: myOpponent, timestamp:0}).then(gameHash => {
+    callHCApi("main", "create_game", {opponent: myOpponent, timestamp:0}).then(gameHash => {
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err) {
         const game = JSON.parse(parsedGameHash).Ok;
