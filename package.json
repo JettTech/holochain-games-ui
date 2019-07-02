@@ -2,10 +2,12 @@
   "name": "holochain-games-ui",
   "version": "0.0.1",
   "main": "index.html",
-  "description": "A game lobby and checkers ui to pair with holochain chess DNA.",
+  "description": "A game lobby and checkers ui to pair with holochain checkers DNA.",
   "scripts": {
     "hc:start": "holochain -c ./conductor-config.toml",
     "build": "rm -r ui-agent1 && rm -r ui-agent2 && cp -r ui ui-agent1 && cp -r ui ui-agent2",
+    "setagent1": "",
+    "setagent2": "",
     "web": "hc web",
     "test": "test",
     "cy:open": "cypress open",

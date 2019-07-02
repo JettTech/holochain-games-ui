@@ -71,7 +71,7 @@ class Game {
           console.log("current game", currentGame);
 
           if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-            console.log("two players exist.. moving to game board... (player: 1, 2) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+            console.log("Two players exist, now moving to create_game. (Player: 1, 2 shown.) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
             presentGame = new Game;
             let {players, id} = presentGame;
             players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
@@ -112,8 +112,9 @@ const createGame = (currentGame) => {
   rerenderGameState(gameMsgs.one, gameMsgs.two);
 
   if(amAuthor === true) {
-    // If player is game author, then the opponent is player 2.
-    callHCApi("main", "create_game", {opponent:currentGame.players.player2, timestamp:0}).then(gameHash => {
+    // If player is game author:
+    const myOpponent = currentGame.players.player_2 !== whoami ? currentGame.players.player_2 : currentGame.players.player_1;
+    callHCApi("main", "create_game", {opponent:myOpponent, timestamp:0}).then(gameHash => {
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err){
         const game = JSON.parse(parsedGameHash).Ok;
@@ -129,8 +130,9 @@ const createGame = (currentGame) => {
     });
   }
   else {
-    // If player is NOT game author, then the opponent is player 1.
-    callHCApi("main", "get_game_hash", {opponent:currentGame.players.player1, timestamp:0}).then(gameHash => {
+    // If player is NOT game author:
+    const myOpponent = currentGame.players.player_2 === whoami ? currentGame.players.player_2 : currentGame.players.player_1;
+    callHCApi("main", "get_game_hash", {opponent: myOpponent, timestamp:0}).then(gameHash => {
       let parsedGameHash = JSON.parse(gameHash);
       if(!parsedGameHash.Err) {
         const game = JSON.parse(parsedGameHash).Ok;
