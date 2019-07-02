@@ -56,6 +56,8 @@ class Game {
       amAuthor = true;
       console.log("amAuthor : ", amAuthor);
     }
+    // Set game status for both players
+    rerenderGameState(gameMsgs.six, gameMsgs.six);
 
     // set timestamp to be constant
     const timestamp = 0; // timestamp as number
@@ -142,45 +144,39 @@ const createGame = (currentGame) => {
       }
     });
   }
+
  }
 
 const boardState = (game_address) => {
     callHCApi("main", "get_state", {game_address}).then(state => {
-      console.log("Board State: ",state);
       refactoredState = refactorState(state);
-         // setBoard();
      });
 }
 const refactorState = (state) => {
   ps = JSON.parse(state).Ok;
-  console.log("PS:",ps);
-
-  p1 = ps.player_1.pieces;
-  p2 = ps.player_2.pieces;
+  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + ps.player_1.winner + "</div>"
+  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + ps.player_2.winner  + "</div>"
+  p1 = refactorPieces(ps.player_1.pieces)
+  p2 = refactorPieces(ps.player_2.pieces)
+  setBoardP1(p1);
+  setBoardP2(p2);
 }
-
+const refactorPieces = (p) => {
+  let r=[];
+  for(i=0;i<p.length;i++){
+    r.push([p[i].x,p[i].y])
+  }
+  return r;
+}
   // initialize board spaces:
-  function setBoard(){
-    const items = [
-      [0, 0],
-      [0, 2],
-      [1, 1],
-      [2, 0],
-      [2, 2],
-      [3, 1],
-      [4, 0],
-      [4, 2],
-      [5, 1],
-      [6, 0],
-      [6, 2],
-      [7, 1],
-    ];
+  function setBoardP1(items){
     for(i=0;i<items.length;i++) {
-      // console.log("i:",i)
-      // console.log("items0: ",items[i][0]);
-      // console.log("items1: ",items[i][1]);
       document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="red-piece"></span>`;
-      // document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="black-piece"></span>`;
+    }
+  }
+  function setBoardP2(items){
+    for(i=0;i<items.length;i++) {
+      document.getElementById(items[i][0]+"x"+items[i][1]).innerHTML = `<span class="black-piece"></span>`;
     }
   }
 
