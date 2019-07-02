@@ -76,7 +76,14 @@ $(document).ready(function($) {
 
         let myAuthoredGames = "";
         myGames.forEach(proposal => {
-          myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+            if(!parsedHash.Err){
+             myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+            }
+            else {
+              myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+            }
+          });
         })
         document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
 
@@ -88,10 +95,11 @@ $(document).ready(function($) {
 
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td data-toggle='popover' title='Full Agent Hash' data-content='" + proposal.entry.agent + "'>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
+      // accept porposal, and if pass validation withot errors, proceed to creating the game!
     })
   })
 

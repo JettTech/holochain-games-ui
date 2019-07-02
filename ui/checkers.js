@@ -61,9 +61,6 @@ class Game {
     else {
       document.getElementById("agent2").innerHTML = "Me"
     }
-    // Set game status for both players
-    rerenderGameState(gameMsgs.six, gameMsgs.six);
-
     // set timestamp to be constant
     const timestamp = 0; // timestamp as number
 
