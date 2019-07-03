@@ -21,6 +21,7 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 ## Gameplay :
 
 1. Game Creation
+
 option a.) Create a game.
 ![](https://i.imgur.com/EcGTtH8.png)
 
@@ -36,12 +37,14 @@ option b.) Join a game already listed in the 'Proposed Games' table.
 ![](https://)
 ---
 2. Game Assembly
+
 option a.) If you created your own game, you will need to await a second player to join before playing. Be sure to refresh your game page every once in a while to ensure to check whether a player has joined.
 
 option b.) If you are joining a game, you will need to await the game author to enter the game page. Be sure to refresh your game page every once in a while to ensure to check whether the author player has joined.
 
 ---
 3. Game Play
+
 option a.) If you are playing the game you originally proposed, you will be Player 1 (Red).
 
 option b.) If you are playing a game you joined, you will be Player 2 (Black). Player 2 will start the gameplay.
