@@ -9,6 +9,18 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 - Pull the https://github.com/Holochain/holochain-games-ui repo
     - `git pull https://github.com/Holochain/holochain-games-ui`
     *Note : As this is a simple static UI, there are no deps to install.*
+
+- Build both Agent1 and Agent2.
+    - Locate lines 1-7 inside both `checkers.js` and `lobby.js`
+    
+    ![](https://i.imgur.com/85KGip3.png)
+    
+    - Build Agent 1 : 
+        - Ensure that lines 2 & 3 are uncommented insdie both `checkers.js` and `lobby.js`
+        - Run `npm run build1`
+    - Build Agent 2 : 
+        - Ensure that lines 6 & 7 are uncommented insdie both `checkers.js` and `lobby.js`
+        - Run `npm run build2`
   
 - Open your terminal and run `npm run hc:start`, this will open up two PORTS at which you can visit the Checkers UI game.
    _**Note: Your `conductor-config.toml` if pre-configured to spin up two agents.**_
