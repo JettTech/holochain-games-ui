@@ -13,6 +13,10 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 - Open your terminal and run `npm run hc:start`, this will open up two PORTS at which you can visit the Checkers UI game.
    _**Note: Your `conductor-config.toml` if pre-configured to spin up two agents.**_
 
+- Build both Agent1 and Agent2.
+ 
+![](https://i.imgur.com/85KGip3.png)
+
 - Open your browser and visit `localhost://8800` and `localhost://9300`. You now have *two running instances* of the Holochain_Generic_Games DNA Hash, which each connect to their respective UI interface.
 
 - Visit the steps below for Gameplay instrucitons.  Enjoy!
