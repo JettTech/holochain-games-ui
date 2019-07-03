@@ -27,18 +27,32 @@
 
   <body>
     <!-- Start of Game Modal -->
-    <div class="modal fade" id="gameMessage" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div class="modal fade" id="gameModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
         <div class="modal-content">
           <h3 class="modal-title" id="gameModalLabel">Game Play</h3>
-          <div class="modal-body" id="gameMessage">Welcome. <br/><br/>You will now begin  the game of checker.  <br/><br/>To determine which player and color you are, reference the Game Board. This is a simple game of checkers, wherein no Kings exist.  <br/><br/>The player who xxxxx is the winner.  <br/>Player 2 will begin.  <br/><br/>Good luck. </div>
+          <div class="modal-body" id="gameMessage">Welcome. <br/><br/>You will now begin  the game of checker.  <br/><br/>To determine which player and color you are, reference the Game Board. This is a simple game of checkers, wherein no Kings exist and skipping pawns is not allowed. <br/><br/>The player who first reaches the opposing side of the board is the winner.  <br/>Player 2 will begin.  <br/><br/>Good luck. </div>
         </div>
       </div>
     </div>
-    <!-- Emd of Game Modal -->
+    <!-- End of Game Modal -->
+
+    <!-- Start of Winner Modal -->
+    <div class="modal fade" id="winnerModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="modal-content">
+          <h3 class="modal-title" id="winnerModalLabel">Game Over</h3>
+          <div class="modal-body" id="winnerMessage"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Emd of Winner Modal -->
 
     <div id="gameContainer" class="container-fluid">
       <div id="backBtn">
