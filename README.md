@@ -16,10 +16,12 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
     ![](https://i.imgur.com/85KGip3.png)
     
     - Build Agent 1 : 
-        - Ensure that lines 2 & 3 are uncommented insdie both `checkers.js` and `lobby.js`
+        - Comment out lines 6 & 7 inside both `checkers.js` and `lobby.js`
+        - Uncomment lines 2 & 3 inside both `checkers.js` and `lobby.js`
         - Run `npm run build1`
     - Build Agent 2 : 
-        - Ensure that lines 6 & 7 are uncommented insdie both `checkers.js` and `lobby.js`
+        - Comment out lines 2 & 3 inside both `checkers.js` and `lobby.js`
+        - Uncomment lines 6 & 7 inside both `checkers.js` and `lobby.js`
         - Run `npm run build2`
   
 - Open your terminal and run `npm run hc:start`, this will open up two PORTS at which you can visit the Checkers UI game.
