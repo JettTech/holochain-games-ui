@@ -1,7 +1,7 @@
 # holochain-games-ui : Checkers
 A simple static Checkers UI with game lobby, built to pair with the checkers DNA offered within the ['Holochain Generic Game' DNA](https://github.com/willemolding/generic-game-holochain).
 
-*NOTE: Pairs with the Holochain_Generic_Games DNA Hash:  **QmasydEL51rYG8iGoTmEtyBfetQZ5gySyouzWGmyXqewWr**, which includes the added `get game hash fn`.*
+*NOTE: Pairs with the Holochain_Generic_Games DNA Hash:  **QmasydEL51rYG8iGoTmEtyBfetQZ5gySyouzWGmyXqewWr**, which was built with HC v0.0.20-alpha3 includes the added `get game hash fn`.*
 
 #
 ---
