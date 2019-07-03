@@ -1,10 +1,10 @@
-// // for agent 1 build :
-// const WS_PORT = "ws://localhost:3001";
-// const INSTANCE_ID = "holochain-checkers-instance";
-
-// for agent 2 build :
+// for agent 1 build :
 const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
+
+// // for agent 2 build :
+// const WS_PORT = "ws://localhost:3002";
+// const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:
@@ -19,7 +19,8 @@ const callHCApi = (zome, funcName, params) => {
 
 // trigger refresh of game state...
 (function refreshBoardTimer(){
-  setTimeout("location.reload(true);",10000);
+  // setTimeout("location.reload(true);",10000);
+  setTimeout(onMount(), 500);
 })();
 
 $(document).ready(function(){
@@ -37,6 +38,7 @@ let whoami = "";
 let amAuthor = false;
 let player1Turn = true;
 let presentGame = {};
+let winnerMessage = "";
 
 class Game {
   constructor() {
@@ -221,22 +223,25 @@ const boardState = (game_address) => {
 }
 const refactorState = (state) => {
   playerState = JSON.parse(state).Ok;
-  if (playerState.player_1.winner){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.d, gameMsgs.e);
-  }
-  else if(playerState.player_2.winner){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.e, gameMsgs.d);
-  }
- else if(playerState.player_1.resigned){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.c, gameMsgs.d);
-  }
-  else if(playerState.player_2.resigned){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.d, gameMsgs.c);
-  }
+  determineWinner();
+
+// NOTE: Currently irrelevant while DNA does not allow for skipping tokens, and thus determining a winner by traditional means.
+ //  if (playerState.player_1.winner){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.d, gameMsgs.e);
+ //  }
+ //  else if(playerState.player_2.winner){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.e, gameMsgs.d);
+ //  }
+ // else if(playerState.player_1.resigned){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.c, gameMsgs.d);
+ //  }
+ //  else if(playerState.player_2.resigned){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.d, gameMsgs.c);
+ //  }
 
   // set pieces onto board
   p1 = refactorPieces(playerState.player_1.pieces)
@@ -353,7 +358,8 @@ const hightlightPath = (playerColor) => {
   let leftXPath = currentX;
   let forwardPath = currentY;
 
-  for(i=0;i<6;i++){
+// NOTE: Remove the ability to select a path that is beyond one row out >> DNA does *not* allow for skipping right now.
+  // for(i=0;i<6;i++){
     rightXPath += 1;
     leftXPath -= 1;
 
@@ -373,7 +379,7 @@ const hightlightPath = (playerColor) => {
         $(`#${rightXPath}x${forwardPath}`).addClass("highlight-path");
       }
     }
-  };
+  // };
 }
 
 // note: previousPlacement & newPlacement are in the format: {x:number, y:number}
@@ -399,4 +405,32 @@ const makeMove = () => {
     }
   });
  }
+
+// Temporary approch to create winner while DNA doesn't allow for token skipping. (hack)
+ const determineWinner = () => {
+   const player1tokens = playerState.player_1.pieces;
+   const player2tokens = playerState.player_2.pieces;
+
+   // piece coordinates are stored as: { x: 0, y: 0 }
+   // player 1 === red token player
+   const player1wins = player1tokens.find(piece => return piece.y === 7);
+
+   // player 2 === black token player
+   const player2wins = player2tokens.find(piece => piece.y === 0);
+
+   if (player1wins) {
+     rerenderGameState(gameMsgs.d, gameMsgs.e);
+     winnerMessage = "Player 1 won!";
+     $('#winnerMessage').html(winnerMessage);
+     $('#winnerModal').modal("show");
+   }
+
+   if (player2wins) {
+     rerenderGameState(gameMsgs.e, gameMsgs.d);
+     winnerMessage = "Player 2 won!";
+     $('#winnerMessage').html(winnerMessage);
+     $('#winnerModal').modal("show");
+   }
+ }
+
 }); // end of file
