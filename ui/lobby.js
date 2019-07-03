@@ -1,10 +1,10 @@
-// for agent 1 build :
+// // for agent 1 build :
+// const WS_PORT = "ws://localhost:3001";
+// const INSTANCE_ID = "holochain-checkers-instance";
+
+// for agent 2 build :
 const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
-
-// // for agent 2 build :
-// const WS_PORT = "ws://localhost:3002";
-// const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:

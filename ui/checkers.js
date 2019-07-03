@@ -1,10 +1,10 @@
-// for agent 1 build :
+// // for agent 1 build :
+// const WS_PORT = "ws://localhost:3001";
+// const INSTANCE_ID = "holochain-checkers-instance";
+
+// for agent 2 build :
 const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
-
-// // for agent 2 build :
-// const WS_PORT = "ws://localhost:3002";
-// const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:
@@ -16,12 +16,6 @@ const callHCApi = (zome, funcName, params) => {
   return response;
 }
 //////////////////////////////////////////////////////////////////
-
-// trigger refresh of game state...
-(function refreshBoardTimer(){
-  // setTimeout("location.reload(true);",10000);
-  setTimeout(onMount(), 500);
-})();
 
 $(document).ready(function(){
 ///////////////////////////
@@ -61,11 +55,13 @@ const rerenderGameState = (agent1state, agent2state) => {
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
 
+
 //////////////////////////////////////////////////////////////////
               // ON Init functions:
 //////////////////////////////////////////////////////////////////
 // On mount, do the following right away:
-(function onMount() {
+
+function onMount (){
   // on mount, do the following right away:
   callHCApi("main", "whoami", {}).then(agent_hash => {
     author_opponent = JSON.parse(agent_hash).Ok;
@@ -77,7 +73,7 @@ const rerenderGameState = (agent1state, agent2state) => {
     rerenderGameState(gameMsgs.f, gameMsgs.f);
 
     //grab url vars:
-    const urlHash = this.window.location.href;
+    const urlHash = window.location.href;
     const urlParirs = urlHash.split("?")[1].split("&");
     const proposal_addr = urlParirs[0].split("=")[1];
     const game_author = urlParirs[1].split("=")[1];
@@ -108,9 +104,18 @@ const rerenderGameState = (agent1state, agent2state) => {
       }
     })
   });
+}
+
+(function load(){
+  onMount();
+}());
+
+
+// trigger refresh of game state...
+(function refreshBoardTimer(){
+  // setTimeout("location.reload(true);",10000);
+  setTimeout("onMount()", 500);
 })();
-
-
 ////////////////////////////////
 // Verify Proposal Function
 ///////////////////////////////
@@ -151,7 +156,6 @@ checkResponse = (proposal_addr) => {
   });
 }
 
-
 ///////////////////////////
 // Create Game Function
 //////////////////////////
@@ -174,10 +178,11 @@ const createGame = (currentGame) => {
         presentGame = {...presentGame, id}
         // console.log("Current game check :", currentGame);
 
-        // deliver game start instructions
-        $('#gameModal').modal("show");
         // set board scene for player 2
         boardState(game);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
       }
       else{
         console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
@@ -200,10 +205,11 @@ const createGame = (currentGame) => {
         presentGame = {...presentGame, id}
         // console.log("Current game check :", currentGame);
 
-        // deliver game start instructions
-        $('#gameModal').modal("show");
         // set board scene for player 1
         boardState(game);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
       }
       else{
         console.log("Failed to get game hash. Error: ", parsedGameHash.Err);
@@ -218,7 +224,7 @@ const createGame = (currentGame) => {
  //////////////////////////////////////////////////////////////////
 const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
-    refactoredState = refactorState(state);
+    refactorState(state);
   })
 }
 const refactorState = (state) => {
@@ -413,7 +419,7 @@ const makeMove = () => {
 
    // piece coordinates are stored as: { x: 0, y: 0 }
    // player 1 === red token player
-   const player1wins = player1tokens.find(piece => return piece.y === 7);
+   const player1wins = player1tokens.find(piece => piece.y === 7);
 
    // player 2 === black token player
    const player2wins = player2tokens.find(piece => piece.y === 0);
