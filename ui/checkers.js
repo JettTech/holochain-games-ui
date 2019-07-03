@@ -1,4 +1,4 @@
-// fpr agent 1 build :
+// // for agent 1 build :
 // const WS_PORT = "ws://localhost:3001";
 // const INSTANCE_ID = "holochain-checkers-instance";
 
@@ -16,6 +16,11 @@ const callHCApi = (zome, funcName, params) => {
   return response;
 }
 //////////////////////////////////////////////////////////////////
+
+// trigger refresh of game state...
+(function refreshBoardTimer(){
+  setTimeout("location.reload(true);",10000);
+})();
 
 $(document).ready(function(){
 ///////////////////////////
@@ -53,12 +58,6 @@ const rerenderGameState = (agent1state, agent2state) => {
   document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
-
-// triger refresh of game state...
- const refreshBoardTimer = (timeoutPeriod) => {
-	setTimeout("location.reload(true);",timeoutPeriod);
-}
-window.onload = timedRefresh(5000)
 
 //////////////////////////////////////////////////////////////////
               // ON Init functions:

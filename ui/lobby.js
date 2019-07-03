@@ -1,4 +1,4 @@
-// fpr agent 1 build :
+// // for agent 1 build :
 // const WS_PORT = "ws://localhost:3001";
 // const INSTANCE_ID = "holochain-checkers-instance";
 
