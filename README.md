@@ -25,12 +25,14 @@ option a.) Create a game.
 ![](https://i.imgur.com/EcGTtH8.png)
 
 *Your new games will appear in the 'Authored Games' table.*
+
 ![](https://)
 
 OR
 
 option b.) Join a game already listed in the 'Proposed Games' table.
 *NOTE: Be sure to click the 'Reload Games' button to ensure you have the most up to date list.*
+
 ![](https://)
 ---
 2. Game Assembly
@@ -43,5 +45,6 @@ option b.) If you are joining a game, you will need to await the game author to 
 option a.) If you are playing the game you originally proposed, you will be Player 1 (Red).
 
 option b.) If you are playing a game you joined, you will be Player 2 (Black). Player 2 will start the gameplay.
+
 ![](https://i.imgur.com/1Se7Li2.jpg)
 ---
