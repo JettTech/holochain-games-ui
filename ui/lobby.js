@@ -1,5 +1,7 @@
-const WS_PORT = "ws://localhost:3001";
-const INSTANCE_ID = "holochain-checkers-instance";
+// const WS_PORT = "ws://localhost:3001";
+// const INSTANCE_ID = "holochain-checkers-instance";
+const WS_PORT = "ws://localhost:3002";
+const INSTANCE_ID = "holochain-checkers-instance-two";
 
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
@@ -16,7 +18,6 @@ const getDisplayName = (agentHash) => {
     return agentHash;
   }
 }
-
 
 $(document).ready(function($) {
   /////////////
@@ -76,9 +77,20 @@ $(document).ready(function($) {
 
         let myAuthoredGames = "";
         myGames.forEach(proposal => {
-          myAuthoredGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          callHCApi("main", "accept_proposal", {proposal_addr: proposal.address, created_at: 0}).then((gameHash) => {
+            let parsedHash = JSON.parse(gameHash);
+            if(!parsedHash.Err){
+              console.log("ParsedHash exisits - NO error ", parsedHash);
+               myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+               $( "#my-pending-games" ).append( myAuthoredGames );
+
+            }
+            else {
+              myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+              $( "#my-pending-games" ).append( myAuthoredGames );
+            }
+          });
         })
-        document.getElementById("my-pending-games").innerHTML = myAuthoredGames;
 
       //////////////////////////////////////////////////////////////////////////////////////
         const otherGames = pendingGames.filter(proposal => {
@@ -88,7 +100,7 @@ $(document).ready(function($) {
 
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td data-toggle='popover' title='Full Agent Hash' data-content='" + proposal.entry.agent + "'>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
@@ -110,6 +122,11 @@ $(document).ready(function($) {
 
     addNewGame();
   });
+
+  $("#reloadBtn").on("click", () => {
+    document.location.reload(true);
+  });
+
 
   // $("#startGameButton").on("click", (newGame) => {
   //   if(newGame.players.player_1 && newGame.players.player_2){

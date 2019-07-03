@@ -41,19 +41,13 @@
               <tr>
                 <th scope="col">
                   Player 1
-                  <span>
-                    <svg id="player1Icon" data-jdenticon-value="agent1" width="50" height="50">
-                      Fallback text or image for browsers not supporting inline svg.
-                    </svg>
-                  </span>
+                  <div id="player1Icon"></div>
+                  <h6 id="agent1"></h6>
                 </th>
                 <th scope="col">
                   Player 2
-                  <span>
-                    <svg id="player2Icon" data-jdenticon-value="agent2" width="50" height="50">
-                      Fallback text or image for browsers not supporting inline svg.
-                    </svg>
-                  </span>
+                  <div id="player2Icon"></div>
+                  <h6 id="agent2"></h6>
                 </th>
               </tr>
             </thead>
@@ -177,7 +171,8 @@
       background: url('./assets/wood2.jpg') no-repeat center center fixed; /*wood3 is also a good background opt. */
       background-size: cover;
       height: 100%;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: scroll;
       text-align: center;
     }
 
@@ -194,7 +189,7 @@
       max-width: 40rem;
     }
 
-    table.checkers {
+    table#checkerTable.checkers {
         height: 50vh ;
         width: 750px ;
         margin: 5px auto;
@@ -209,10 +204,10 @@
     }
     tr.checkers:nth-child(odd) td.checkers:nth-child(even),
     tr.checkers:nth-child(even) td.checkers:nth-child(odd) {
-        background: #BA7A3A;
+        background: #BA7A3A /* #F0D2B4; #BA7A3A #fff */
     }
 
-    .red-piece {
+    #player1Icon, .red-piece {
       height: 95px;
       width: 95px;
       background-color: #CC0000;
@@ -221,13 +216,24 @@
       display: inline-block;
     }
 
-    .black-piece {
+    #player2Icon, .black-piece {
       height: 95px;
       width: 95px;
       background-color: #00001F;
       border-radius: 50%;
       border: 5px solid white;
       display: inline-block;
+    }
+
+    #player1Icon, #player2Icon {
+      height: 40px;
+      width: 40px;
+      display: inline-flex;
+      vertical-align: baseline;
+    }
+
+    .highlight-path {
+      background: #7b5733;
     }
 
   </style>
