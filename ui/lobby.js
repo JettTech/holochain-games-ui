@@ -1,3 +1,5 @@
+// const WS_PORT = "ws://localhost:3001";
+// const INSTANCE_ID = "holochain-checkers-instance";
 const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
 
@@ -16,7 +18,6 @@ const getDisplayName = (agentHash) => {
     return agentHash;
   }
 }
-
 
 $(document).ready(function($) {
   /////////////
@@ -85,9 +86,7 @@ $(document).ready(function($) {
 
             }
             else {
-              console.log("ERROR - NO ParsedHash exists", parsedHash);
               myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' class='disabled' aria-disabled='true' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
-              console.log("LOGGING: ",myAuthoredGames);
               $( "#my-pending-games" ).append( myAuthoredGames );
             }
           });
@@ -123,6 +122,11 @@ $(document).ready(function($) {
 
     addNewGame();
   });
+
+  $("#reloadBtn").on("click", () => {
+    document.location.reload(true);
+  });
+
 
   // $("#startGameButton").on("click", (newGame) => {
   //   if(newGame.players.player_1 && newGame.players.player_2){

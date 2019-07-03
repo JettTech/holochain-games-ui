@@ -15,8 +15,8 @@ keystore_file = "./agent2.keystore"
 # -----------  DNA  -----------
 [[dnas]]
 id = "holochain_checkers"
-file = "../generic-game-holochain/dist/generic-game.dna.json"
-hash = "QmXTk8QLtYxw4bvPTuHupRZtXikueL1venGcLNhU6GXn2P"
+file = "./dna/generic-game-holochain/dist/generic-game.dna.json"
+hash = "QmasydEL51rYG8iGoTmEtyBfetQZ5gySyouzWGmyXqewWr"
 
 #----------Instance-------
 
