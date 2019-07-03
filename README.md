@@ -32,11 +32,12 @@ OR
 **Option b.)** Join a game already listed in the 'Proposed Games' table.
 *NOTE: Be sure to click the 'Reload Games' button to ensure you have the most up to date list.*
 
-![](https://)
+![](https://i.imgur.com/bcxsXSJ.png)
+
 ---
 ### 2. Game Assembly
 
-**option a.)** If you created your own game, you will need to await a second player to join before playing. Be sure to refresh your game page every once in a while to ensure to check whether a player has joined.
+**Option a.)** If you created your own game, you will need to await a second player to join before playing. Be sure to refresh your game page every once in a while to ensure to check whether a player has joined.
 
 **Option b.)** If you are joining a game, you will need to await the game author to enter the game page. Be sure to refresh your game page every once in a while to ensure to check whether the author player has joined.
 
