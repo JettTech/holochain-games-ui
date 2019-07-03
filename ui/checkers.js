@@ -17,11 +17,6 @@ const callHCApi = (zome, funcName, params) => {
 }
 //////////////////////////////////////////////////////////////////
 
-// trigger refresh of game state...
-(function refreshBoardTimer(){
-  setTimeout("location.reload(true);",10000);
-})();
-
 $(document).ready(function(){
 ///////////////////////////
 //Global Vars:
@@ -37,6 +32,7 @@ let whoami = "";
 let amAuthor = false;
 let player1Turn = true;
 let presentGame = {};
+let winnerMessage = "";
 
 class Game {
   constructor() {
@@ -59,11 +55,13 @@ const rerenderGameState = (agent1state, agent2state) => {
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
 
+
 //////////////////////////////////////////////////////////////////
               // ON Init functions:
 //////////////////////////////////////////////////////////////////
 // On mount, do the following right away:
-(function onMount() {
+
+function onMount (){
   // on mount, do the following right away:
   callHCApi("main", "whoami", {}).then(agent_hash => {
     author_opponent = JSON.parse(agent_hash).Ok;
@@ -75,7 +73,7 @@ const rerenderGameState = (agent1state, agent2state) => {
     rerenderGameState(gameMsgs.f, gameMsgs.f);
 
     //grab url vars:
-    const urlHash = this.window.location.href;
+    const urlHash = window.location.href;
     const urlParirs = urlHash.split("?")[1].split("&");
     const proposal_addr = urlParirs[0].split("=")[1];
     const game_author = urlParirs[1].split("=")[1];
@@ -106,9 +104,18 @@ const rerenderGameState = (agent1state, agent2state) => {
       }
     })
   });
+}
+
+(function load(){
+  onMount();
+}());
+
+
+// trigger refresh of game state...
+(function refreshBoardTimer(){
+  // setTimeout("location.reload(true);",10000);
+  setTimeout("onMount()", 500);
 })();
-
-
 ////////////////////////////////
 // Verify Proposal Function
 ///////////////////////////////
@@ -149,7 +156,6 @@ checkResponse = (proposal_addr) => {
   });
 }
 
-
 ///////////////////////////
 // Create Game Function
 //////////////////////////
@@ -172,10 +178,11 @@ const createGame = (currentGame) => {
         presentGame = {...presentGame, id}
         // console.log("Current game check :", currentGame);
 
-        // deliver game start instructions
-        $('#gameModal').modal("show");
         // set board scene for player 2
         boardState(game);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
       }
       else{
         console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
@@ -198,10 +205,11 @@ const createGame = (currentGame) => {
         presentGame = {...presentGame, id}
         // console.log("Current game check :", currentGame);
 
-        // deliver game start instructions
-        $('#gameModal').modal("show");
         // set board scene for player 1
         boardState(game);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
       }
       else{
         console.log("Failed to get game hash. Error: ", parsedGameHash.Err);
@@ -216,27 +224,30 @@ const createGame = (currentGame) => {
  //////////////////////////////////////////////////////////////////
 const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
-    refactoredState = refactorState(state);
+    refactorState(state);
   })
 }
 const refactorState = (state) => {
   playerState = JSON.parse(state).Ok;
-  if (playerState.player_1.winner){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.d, gameMsgs.e);
-  }
-  else if(playerState.player_2.winner){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.e, gameMsgs.d);
-  }
- else if(playerState.player_1.resigned){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.c, gameMsgs.d);
-  }
-  else if(playerState.player_2.resigned){
-    // Update game status for both players
-    rerenderGameState(gameMsgs.d, gameMsgs.c);
-  }
+  determineWinner();
+
+// NOTE: Currently irrelevant while DNA does not allow for skipping tokens, and thus determining a winner by traditional means.
+ //  if (playerState.player_1.winner){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.d, gameMsgs.e);
+ //  }
+ //  else if(playerState.player_2.winner){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.e, gameMsgs.d);
+ //  }
+ // else if(playerState.player_1.resigned){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.c, gameMsgs.d);
+ //  }
+ //  else if(playerState.player_2.resigned){
+ //    // Update game status for both players
+ //    rerenderGameState(gameMsgs.d, gameMsgs.c);
+ //  }
 
   // set pieces onto board
   p1 = refactorPieces(playerState.player_1.pieces)
@@ -353,7 +364,8 @@ const hightlightPath = (playerColor) => {
   let leftXPath = currentX;
   let forwardPath = currentY;
 
-  for(i=0;i<6;i++){
+// NOTE: Remove the ability to select a path that is beyond one row out >> DNA does *not* allow for skipping right now.
+  // for(i=0;i<6;i++){
     rightXPath += 1;
     leftXPath -= 1;
 
@@ -373,7 +385,7 @@ const hightlightPath = (playerColor) => {
         $(`#${rightXPath}x${forwardPath}`).addClass("highlight-path");
       }
     }
-  };
+  // };
 }
 
 // note: previousPlacement & newPlacement are in the format: {x:number, y:number}
@@ -399,4 +411,32 @@ const makeMove = () => {
     }
   });
  }
+
+// Temporary approch to create winner while DNA doesn't allow for token skipping. (hack)
+ const determineWinner = () => {
+   const player1tokens = playerState.player_1.pieces;
+   const player2tokens = playerState.player_2.pieces;
+
+   // piece coordinates are stored as: { x: 0, y: 0 }
+   // player 1 === red token player
+   const player1wins = player1tokens.find(piece => piece.y === 7);
+
+   // player 2 === black token player
+   const player2wins = player2tokens.find(piece => piece.y === 0);
+
+   if (player1wins) {
+     rerenderGameState(gameMsgs.d, gameMsgs.e);
+     winnerMessage = "Player 1 won!";
+     $('#winnerMessage').html(winnerMessage);
+     $('#winnerModal').modal("show");
+   }
+
+   if (player2wins) {
+     rerenderGameState(gameMsgs.e, gameMsgs.d);
+     winnerMessage = "Player 2 won!";
+     $('#winnerMessage').html(winnerMessage);
+     $('#winnerModal').modal("show");
+   }
+ }
+
 }); // end of file
