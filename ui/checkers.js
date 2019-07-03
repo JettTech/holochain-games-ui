@@ -1,17 +1,31 @@
+// // for agent 1 build :
 // const WS_PORT = "ws://localhost:3001";
 // const INSTANCE_ID = "holochain-checkers-instance";
+
+// for agent 2 build :
 const WS_PORT = "ws://localhost:3002";
 const INSTANCE_ID = "holochain-checkers-instance-two";
 
+//////////////////////////////////////////////////////////////////
+              // Holochain API Call Function:
+//////////////////////////////////////////////////////////////////
 const callHCApi = (zome, funcName, params) => {
   const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
       return await callZome(INSTANCE_ID, zome, funcName)(params)
   })
   return response;
 }
+//////////////////////////////////////////////////////////////////
+
+// trigger refresh of game state...
+(function refreshBoardTimer(){
+  setTimeout("location.reload(true);",10000);
+})();
 
 $(document).ready(function(){
-////////
+///////////////////////////
+//Global Vars:
+///////////////////////////
 const gameMsgs = {
   a: "Game In Process",
   c: "You Resigned.",
@@ -35,8 +49,20 @@ class Game {
     };
   }
 }
-////////
 
+///////////////////////////
+// helper function :
+//////////////////////////
+const rerenderGameState = (agent1state, agent2state) => {
+  //change to tokens (red and black)
+  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
+  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
+}
+
+//////////////////////////////////////////////////////////////////
+              // ON Init functions:
+//////////////////////////////////////////////////////////////////
+// On mount, do the following right away:
 (function onMount() {
   // on mount, do the following right away:
   callHCApi("main", "whoami", {}).then(agent_hash => {
@@ -82,12 +108,11 @@ class Game {
   });
 })();
 
-const rerenderGameState = (agent1state, agent2state) => {
-  //change to tokens (red and black)
-  document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
-  document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
-}
 
+////////////////////////////////
+// Verify Proposal Function
+///////////////////////////////
+// verify at least one proposal response exists, choose 1st one (for now), and create game:
 checkResponse = (proposal_addr) => {
   callHCApi("main", "check_responses", {proposal_addr}).then((game) => {
     console.log("current proposed game (raw) : ", JSON.parse(game));
@@ -124,13 +149,11 @@ checkResponse = (proposal_addr) => {
   });
 }
 
-// on mount fetch game info
-const createGame = (currentGame) => {
-  console.log("currentgame to create : ", currentGame);
 
-// supply game board with agent icons
-  document.getElementById("player1Icon").setAttribute('data-jdenticon-value', currentGame.entry.player_1);
-  document.getElementById("player2Icon").setAttribute('data-jdenticon-value', currentGame.entry.player_2);
+///////////////////////////
+// Create Game Function
+//////////////////////////
+const createGame = (currentGame) => {
   // Update game status for both players
   rerenderGameState(gameMsgs.a, gameMsgs.a);
 
@@ -148,6 +171,9 @@ const createGame = (currentGame) => {
         id = game;
         presentGame = {...presentGame, id}
         // console.log("Current game check :", currentGame);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
         // set board scene for player 2
         boardState(game);
       }
@@ -166,11 +192,14 @@ const createGame = (currentGame) => {
       if(!parsedGameHash.Err) {
         const game = parsedGameHash.Ok;
         console.log(" Following game has started:", game);
-        // console.log("Current game check :", currentGame);
 
         let {id} = presentGame;
         id = game;
         presentGame = {...presentGame, id}
+        // console.log("Current game check :", currentGame);
+
+        // deliver game start instructions
+        $('#gameModal').modal("show");
         // set board scene for player 1
         boardState(game);
       }
@@ -180,9 +209,11 @@ const createGame = (currentGame) => {
       }
     });
   }
-
  }
 
+ //////////////////////////////////////////////////////////////////
+               // Set/Reset Board State Logic:
+ //////////////////////////////////////////////////////////////////
 const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
     refactoredState = refactorState(state);
@@ -193,24 +224,21 @@ const refactorState = (state) => {
   if (playerState.player_1.winner){
     // Update game status for both players
     rerenderGameState(gameMsgs.d, gameMsgs.e);
-    // document.getElementById("player1State").innerHTML = "<div style='color:black'>" + playerState.player_1.winner + "</div>"
   }
   else if(playerState.player_2.winner){
     // Update game status for both players
     rerenderGameState(gameMsgs.e, gameMsgs.d);
-    // document.getElementById("player2State").innerHTML = "<div style='color:black'>" + playerState.player_2.winner  + "</div>"
   }
  else if(playerState.player_1.resigned){
     // Update game status for both players
     rerenderGameState(gameMsgs.c, gameMsgs.d);
-    // document.getElementById("player1State").innerHTML = "<div style='color:black'>" + playerState.player_1.resigned  + "</div>"
   }
   else if(playerState.player_2.resigned){
     // Update game status for both players
     rerenderGameState(gameMsgs.d, gameMsgs.c);
-    // document.getElementById("player2State").innerHTML = "<div style='color:black'>" + playerState.player_2.resigned  + "</div>"
   }
 
+  // set pieces onto board
   p1 = refactorPieces(playerState.player_1.pieces)
   p2 = refactorPieces(playerState.player_2.pieces)
   setBoardP1(p1);
@@ -235,8 +263,40 @@ const refactorPieces = (pieces) => {
     }
   }
 
-/////////////////////////////
-// game movement logic:
+  /////////////////////////////////////////////////////////////////
+                // : game movement logic:
+  /////////////////////////////////////////////////////////////////
+  ///////////////////////////
+  // helper functions :
+  //////////////////////////
+  // helper function to remove highlight class
+  function clearPath() {
+    for(i=0;i<=7;i++) {
+      for(j=0;j<=7; j++) {
+        if($(`#${i}x${j}`).hasClass("highlight-path")) {
+          $(`#${i}x${j}`).removeClass("highlight-path");
+        }
+      }
+    }
+  }
+
+  // helper function to trigger new placement of token
+  function initiateMove (x,y){
+     newPlacement = {x, y};
+     presentGame = {...presentGame, requestedMove:newPlacement }
+
+     console.log("XY:",x,y);
+     console.log("Present Game:",presentGame);
+     // call make_move api
+     makeMove();
+     // remove hightlight path
+     clearPath()
+  }
+
+///////////////////////////
+// triggered event handler
+///////////////////////////
+// on clicking any spae on the checker table, determine if the selection is valid, and if
 $('#checkerTable tbody').on('click','td',function() {
   console.log("token click attempt : (row, col) : ", $(this).closest("tr").index(), $(this).closest("td").index());
   const y = $(this).closest("tr").index();
@@ -265,12 +325,11 @@ $('#checkerTable tbody').on('click','td',function() {
     if($(tokenSelected).find("span").hasClass(playerColor) && $('.hightlight-path')){
       console.log("inside remove highlight-path class....");
       // if player selects diff token, remove all spaces with highlight-path classes (in order to create new/correct ones)
-      // $(`table > tr#checkers > td`).removeClass("hightlight-path");
       clearPath()
     }
 
     previousPlacement = {x, y};
-    console.log("previousPlacement ", previousPlacement);
+    // console.log("previousPlacement ", previousPlacement);
     presentGame = {...presentGame, previousMove:previousPlacement }
     hightlightPath(playerColor)
   }
@@ -282,6 +341,10 @@ validNumbers = (number) => {
   else return false;
 }
 
+///////////////////////////
+// main move functions
+//////////////////////////
+// highlight the availble spaces to move token
 const hightlightPath = (playerColor) => {
   console.log("inside the hightlightPath : playerColor, previousPlacement = ", playerColor, previousPlacement);
   const {x:currentX , y:currentY} = previousPlacement;
@@ -304,47 +367,17 @@ const hightlightPath = (playerColor) => {
     // set class for css to recognize and highlight path
     if (validNumbers(forwardPath)) {
       if (validNumbers(leftXPath))  {
-        // console.log(`highlighting the following coord: #${leftXPath}x${forwardPath}`);
         $(`#${leftXPath}x${forwardPath}`).addClass("highlight-path");
       }
       if (validNumbers(rightXPath)) {
-        // console.log(`highlighting the following coord: #${rightXPath}x${forwardPath}`);
         $(`#${rightXPath}x${forwardPath}`).addClass("highlight-path");
       }
     }
   };
 }
 
-// helper function to remove highlight class
-function clearPath() {
-  for(i=0;i<=7;i++) {
-    for(j=0;j<=7; j++) {
-      if($(`#${i}x${j}`).hasClass("highlight-path")) {
-        $(`#${i}x${j}`).removeClass("highlight-path");
-      }
-    }
-  }
-}
-
-
-function initiateMove (x,y){
-  // console.log("path click attempt : (row, col) : ", $(this).closest("tr").index(),$(this).closest("td").index());
-  //  const y = $(this).closest("tr").index();
-  //  const x = $(this).closest("td").index();
-
-   newPlacement = {x, y};
-   presentGame = {...presentGame, requestedMove:newPlacement }
-
-   console.log("XY:",x,y);
-   console.log("Present Game:",presentGame);
-   makeMove();
-   // remove hightlight path
-   clearPath()
-   // $(`.hightlight-path`).removeClass("hightlight-path");
-}
-
-
-// previousPlacement & newPlacement are in the format: {x:number, y:number}
+// note: previousPlacement & newPlacement are in the format: {x:number, y:number}
+// call make_move api, change game state, refresh board to reset board
 const makeMove = () => {
   const from = presentGame.previousMove;
   const to = presentGame.requestedMove;
@@ -358,7 +391,6 @@ const makeMove = () => {
     const parsedMoveHash = JSON.parse(moveHash);
     if(!parsedMoveHash.Err) {
       console.log("Move made:",parsedMoveHash.Ok);
-      // boardState(presentGame.id);
       document.location.reload(true);
     }
     else {
@@ -367,5 +399,4 @@ const makeMove = () => {
     }
   });
  }
-///////
 }); // end of file
