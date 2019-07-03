@@ -14,17 +14,17 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
    _**Note: Your `conductor-config.toml` if pre-configured to spin up two agents.**_
 
 - Build both Agent1 and Agent2.
-    - Locate lines 1-7 inside both *checkers.js* and *lobby.js*
+    - Locate lines 1-7 inside both *checkers.js* & *lobby.js*
     
     ![](https://i.imgur.com/85KGip3.png)
     
     - Build Agent 1 : 
-        - Comment out lines 6 & 7 inside both *checkers.js* and *lobby.js*
-        - Uncomment lines 2 & 3 inside both *checkers.js* and *lobby.js*
+        - Comment out lines 6 & 7 inside both *checkers.js* & *lobby.js*
+        - Uncomment lines 2 & 3 inside both *checkers.js* & *lobby.js*
         - Run `npm run build1`
     - Build Agent 2 : 
-        - Comment out lines 2 & 3 inside both *checkers.js* and *lobby.js*
-        - Uncomment lines 6 & 7 inside both *checkers.js* and *lobby.js*
+        - Comment out lines 2 & 3 inside both *checkers.js* & *lobby.js*
+        - Uncomment lines 6 & 7 inside both *checkers.js* & *lobby.js*
         - Run `npm run build2`
 
 - Open your browser and visit `localhost://8800` and `localhost://9300`. You now have *two running instances* of the Holochain_Generic_Games DNA Hash, which each connect to their respective UI interface.
