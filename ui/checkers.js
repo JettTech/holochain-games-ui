@@ -1,10 +1,10 @@
-// // for agent 1 build :
-// const WS_PORT = "ws://localhost:3001";
-// const INSTANCE_ID = "holochain-checkers-instance";
+// for agent 1 build :
+const WS_PORT = "ws://localhost:3001";
+const INSTANCE_ID = "holochain-checkers-instance";
 
-// for agent 2 build :
-const WS_PORT = "ws://localhost:3002";
-const INSTANCE_ID = "holochain-checkers-instance-two";
+// // for agent 2 build :
+// const WS_PORT = "ws://localhost:3002";
+// const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:
@@ -30,8 +30,8 @@ const gameMsgs = {
 }
 let whoami = "";
 let amAuthor = false;
-let player1Turn = true;
 let presentGame = {};
+let gameErrorMessage = "";
 let winnerMessage = "";
 
 class Game {
@@ -100,7 +100,10 @@ function onMount (){
       else{
         console.log("Failed to Accept Proposal. Error: ", JSON.parse(parsedHash.Err.Internal).kind.ValidationFailed);
 
-        alert("\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: "+ JSON.parse(parsedHash.Err.Internal).kind.ValidationFailed)
+        gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: " + JSON.parse(parsedHash.Err.Internal).kind.ValidationFailed;
+        $('#gameModalLabel').html("Notice");
+        $('#gameMessage').html(gameErrorMessage);
+        $('#gameModal').modal("show");
       }
     })
   });
@@ -113,9 +116,11 @@ function onMount (){
 
 // trigger refresh of game state...
 (function refreshBoardTimer(){
-  // setTimeout("location.reload(true);",10000);
-  setTimeout("onMount()", 500);
+  setTimeout("location.reload(true);",100000);
+  // setTimeout("onMount()", 500);
 })();
+
+
 ////////////////////////////////
 // Verify Proposal Function
 ///////////////////////////////
@@ -147,11 +152,19 @@ checkResponse = (proposal_addr) => {
     else if (currentGame.Ok.length <= 0) {
       console.log("Error: Two players were not found for this game. Check for errors in network tab.");
 
-      alert("\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game.");
+      gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game."
+      $('#gameModalLabel').html("Notice");
+      $('#gameMessage').html(gameErrorMessage);
+      $('#gameModal').modal("show");
     }
     else {
       console.log("Failed to create game. Error: ", JSON.parse(currentGame.Err.Internal).kind.ValidationFailed);
-      alert("\n Oops... looks like there was an error. Error: "+ JSON.parse(currentGame.Err.Internal).kind.ValidationFailed)
+
+      gameErrorMessage = "\n Oops... looks like there was an error. Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
+
+      $('#gameModalLabel').html("Notice");
+      $('#gameMessage').html(gameErrorMessage);
+      $('#gameModal').modal("show");
     }
   });
 }
@@ -176,17 +189,18 @@ const createGame = (currentGame) => {
         let {id} = presentGame;
         id = game;
         presentGame = {...presentGame, id}
-        // console.log("Current game check :", currentGame);
 
         // set board scene for player 2
         boardState(game);
-
-        // deliver game start instructions
-        $('#gameModal').modal("show");
       }
       else{
         console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
-        alert("Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
+
+        gameErrorMessage = "Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
+
+        $('#gameModalLabel').html("Notice");
+        $('#gameMessage').html(gameErrorMessage);
+        $('#gameModal').modal("show");
       }
     });
   }
@@ -203,20 +217,20 @@ const createGame = (currentGame) => {
         let {id} = presentGame;
         id = game;
         presentGame = {...presentGame, id}
-        // console.log("Current game check :", currentGame);
 
         // set board scene for player 1
         boardState(game);
+    }
+    else{
+        console.log("Failed to get game hash. Error: ", parsedGameHash.Err);
+        gameErrorMessage = "Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
 
-        // deliver game start instructions
+        $('#gameModalLabel').html("Notice");
+        $('#gameMessage').html(gameErrorMessage);
         $('#gameModal').modal("show");
       }
-      else{
-        console.log("Failed to get game hash. Error: ", parsedGameHash.Err);
-        alert("Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
-      }
     });
-  }
+  };
  }
 
  //////////////////////////////////////////////////////////////////
@@ -224,11 +238,21 @@ const createGame = (currentGame) => {
  //////////////////////////////////////////////////////////////////
 const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
-    refactorState(state);
+    playerState = JSON.parse(state).Ok;
+
+    console.log("game state.moves  :", playerState);
+    // deliver game start instructions
+    if(playerState.moves && playerState.moves.length<=0) {
+      winnerMessage = 'Welcome. \n \n You will now begin the game of Holochain Simple Checkers.  \n \n To determine which player and color you are, reference the Game Board. This is a simple game of checkers, wherein no Kings exist and skipping pawns is not allowed. \n \n The player who first reaches the opposing side of the board is the winner.  \n \n Player 2 will begin.  \n \n Good luck.'
+      $('#gameModalLabel').html("Game Play");
+      $('#gameMessage').html(winnerMessage);
+      $('#gameModal').modal("show");
+    }
+
+    refactorState(playerState);
   })
 }
-const refactorState = (state) => {
-  playerState = JSON.parse(state).Ok;
+const refactorState = (playerState) => {
   determineWinner();
 
 // NOTE: Currently irrelevant while DNA does not allow for skipping tokens, and thus determining a winner by traditional means.
