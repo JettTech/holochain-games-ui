@@ -63,4 +63,6 @@ OR
 **Option b.)** If you are playing a game you joined, you will be Player 2 (Black). Player 2 will start the gameplay.
 
 ![](https://i.imgur.com/1Se7Li2.jpg)
+
+![](https://i.imgur.com/j9Q1plm.jpg)
 ---
