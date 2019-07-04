@@ -2,7 +2,7 @@
 const WS_PORT = "ws://localhost:3001";
 const INSTANCE_ID = "holochain-checkers-instance";
 
-// for agent 2 build :
+// // for agent 2 build :
 // const WS_PORT = "ws://localhost:3002";
 // const INSTANCE_ID = "holochain-checkers-instance-two";
 
@@ -238,21 +238,21 @@ const createGame = (currentGame) => {
  //////////////////////////////////////////////////////////////////
 const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
+    playerState = JSON.parse(state).Ok;
 
-    console.log("game state :", state);
+    console.log("game state.moves  :", playerState);
     // deliver game start instructions
-    if(!state.moves.previous_move) {
+    if(playerState.moves && playerState.moves.length<=0) {
       winnerMessage = 'Welcome. \n \n You will now begin the game of Holochain Simple Checkers.  \n \n To determine which player and color you are, reference the Game Board. This is a simple game of checkers, wherein no Kings exist and skipping pawns is not allowed. \n \n The player who first reaches the opposing side of the board is the winner.  \n \n Player 2 will begin.  \n \n Good luck.'
       $('#gameModalLabel').html("Game Play");
       $('#gameMessage').html(winnerMessage);
       $('#gameModal').modal("show");
     }
 
-    refactorState(state);
+    refactorState(playerState);
   })
 }
-const refactorState = (state) => {
-  playerState = JSON.parse(state).Ok;
+const refactorState = (playerState) => {
   determineWinner();
 
 // NOTE: Currently irrelevant while DNA does not allow for skipping tokens, and thus determining a winner by traditional means.
