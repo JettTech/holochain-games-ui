@@ -71,7 +71,7 @@ OR
     1. No pawn upgrades to bi-directional King pawns
     2. No skippng pawns
 
-> **Consequently, in order to win, a player must successful reach the opporite side of the game board past the two rows of their opponnents pawns.** This  simple game interaction will allow for students of Holochain developement to focus instead on the composition and flow of the json-rpc ws calls used to connect the UI to the user's instance of a Holochain DNA.
+> **Consequently, in order to win, a player must successful reach the opposite side of the game board past the two rows of their opponent's pawns.** This  simple game interaction will allow for students of Holochain developement to focus instead on the composition and flow of the json-rpc ws calls used to connect the UI to the user's instance of a Holochain DNA.
 
 > See below for an example of a winning board state.
 
