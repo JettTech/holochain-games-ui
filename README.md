@@ -67,9 +67,9 @@ OR
 ---
 > *NOTE: As the main focus of this game is to hightlight the techical aspects of Holochain and demonstrate how UIs connect to the public functions exposed by Zomes within the Holochain DNA, we have simplified 2 major aspects of the gameplay.*
 
-    *Updated Game Rules*
-    *1. No pawn upgrades to bi-directional King pawns*
-    *2. No skippng pawns*
+    Updated Game Rules
+    1. No pawn upgrades to bi-directional King pawns
+    2. No skippng pawns
 
 > Consequently, in order to win, a player must successful reach the opporite side of the game board past the two rows of their opponnents pawns. This  simple game interaction will allow for students of Holochain developement to more cleanly see the composition and flow of the json-rpc ws calls used to connect the UI to the user's instance of a Holochain DNA.
 > See below for an example of a winning board state.
