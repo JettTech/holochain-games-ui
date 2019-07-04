@@ -29,7 +29,7 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 
 - Open your browser and visit `localhost://8800` and `localhost://9300`. You now have *two running instances* of the Holochain_Generic_Games DNA Hash, which each connect to their respective UI interface.
 
-- Visit the steps below for Gameplay instrucitons.  Enjoy!
+- Visit the steps below for Gameplay instructions. Enjoy!
 #
 ---
 ## Gameplay :
