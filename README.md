@@ -29,7 +29,8 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 
 - Open your browser and visit `localhost://8800` and `localhost://9300`. You now have *two running instances* of the Holochain_Generic_Games DNA Hash, which each connect to their respective UI interface.
 
-- Visit the steps below for Gameplay instrucitons.  Enjoy!
+- Visit the steps below for Gameplay instructions. Enjoy!
+
 #
 ---
 ## Gameplay :
@@ -44,7 +45,7 @@ A simple static Checkers UI with game lobby, built to pair with the checkers DNA
 OR
 
 **Option b.)** Join a game already listed in the 'Proposed Games' table.
-*NOTE: Be sure to click the 'Reload Games' button to ensure you have the most up to date list.*
+> *NOTE: Be sure to click the 'Reload Games' button to ensure you have the most up to date list.*
 
 ![](https://i.imgur.com/bcxsXSJ.png)
 
@@ -63,4 +64,17 @@ OR
 **Option b.)** If you are playing a game you joined, you will be Player 2 (Black). Player 2 will start the gameplay.
 
 ![](https://i.imgur.com/1Se7Li2.jpg)
+
+---
+> *NOTE: As the main focus of this game is to hightlight the techical aspects of Holochain and demonstrate how UIs connect to the public functions exposed by Zomes within the Holochain DNA, we have simplified 2 major aspects of the gameplay.*
+
+    Updated Game Rules
+    1. No pawn upgrades to bi-directional King pawns
+    2. No skippng pawns
+
+> **Consequently, in order to win, a player must successful reach the opposite side of the game board past the two rows of their opponent's pawns.** This  simple game interaction will allow for students of Holochain developement to focus instead on the composition and flow of the json-rpc ws calls used to connect the UI to the user's instance of a Holochain DNA.
+
+> See below for an example of a winning board state.
+
+![](https://i.imgur.com/j9Q1plm.jpg)
 ---
