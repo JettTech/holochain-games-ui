@@ -1,16 +1,14 @@
 // for agent 1 build :
-const WS_PORT = "ws://localhost:3001";
 const INSTANCE_ID = "holochain-checkers-instance";
 
-// // for agent 2 build :
-// const WS_PORT = "ws://localhost:3002";
+// for agent 2 build :
 // const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:
 //////////////////////////////////////////////////////////////////
 const callHCApi = (zome, funcName, params) => {
-  const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
+  const response = window.holochainclient.connect().then(async({callZome, close}) => {
       return await callZome(INSTANCE_ID, zome, funcName)(params)
   })
   return response;
@@ -23,7 +21,7 @@ $(document).ready(function(){
 ///////////////////////////
 const gameMsgs = {
   a: "Game In Process",
-  c: "You Resigned.",
+  // c: "You Resigned.", // note: currently api for resignation not in place.
   d: "You Won!",
   e: "You Lost.",
   f: "N/A"
@@ -38,7 +36,6 @@ class Game {
   constructor() {
     this.id = "game_hash",
     this.timestamp= 0,
-    this.name = "",
     this.players = {
       player1: "",
       player2: ""
@@ -50,7 +47,7 @@ class Game {
 // helper function :
 //////////////////////////
 const rerenderGameState = (agent1state, agent2state) => {
-  //change to tokens (red and black)
+  //diplay tokens for each agent (red and black)
   document.getElementById("player1State").innerHTML = "<div style='color:black'>" + agent1state + "</div>"
   document.getElementById("player2State").innerHTML = "<div style='color:black'>" + agent2state  + "</div>"
 }
@@ -60,9 +57,7 @@ const rerenderGameState = (agent1state, agent2state) => {
               // ON Init functions:
 //////////////////////////////////////////////////////////////////
 // On mount, do the following right away:
-
-function onMount (){
-  // on mount, do the following right away:
+(function onMount (){
   callHCApi("main", "whoami", {}).then(agent_hash => {
     author_opponent = JSON.parse(agent_hash).Ok;
     // set global ref to agent ID
@@ -91,33 +86,27 @@ function onMount (){
     // set timestamp to be constant (current hack prior to int size decision)
     const timestamp = 0; // timestamp as number
 
-    // accept porposal, and if pass validation withot errors, proceed to creating the game!
+    // accept proposal, and if pass validation without errors, proceed to creating the game!
     callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
       let parsedHash = JSON.parse(gameHash);
       if(!parsedHash.Err){
         checkResponse(proposal_addr);
       }
       else{
-        console.log("Failed to Accept Proposal. Error: ", JSON.parse(parsedHash.Err.Internal).kind.ValidationFailed);
+        console.log("Failed to Accept Proposal. Error: ", parsedHash.Err.Internal);
 
-        gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: " + JSON.parse(parsedHash.Err.Internal).kind.ValidationFailed;
+        gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: " + parsedHash.Err.Internal;
         $('#gameModalLabel').html("Notice");
         $('#gameMessage').html(gameErrorMessage);
         $('#gameModal').modal("show");
       }
     })
   });
-}
-
-(function load(){
-  onMount();
-}());
-
+})();
 
 // trigger refresh of game state...
 (function refreshBoardTimer(){
-  setTimeout("location.reload(true);",100000);
-  // setTimeout("onMount()", 500);
+  setTimeout("location.reload(true);",10000);
 })();
 
 
@@ -127,24 +116,20 @@ function onMount (){
 // verify at least one proposal response exists, choose 1st one (for now), and create game:
 checkResponse = (proposal_addr) => {
   callHCApi("main", "check_responses", {proposal_addr}).then((game) => {
-    console.log("current proposed game (raw) : ", JSON.parse(game));
-
     let currentGame = JSON.parse(game);
     if(!currentGame.Err && currentGame.Ok.length > 0){
       // Choose first game in array.
       // NOTE : Later iterations can include an ability to choose between different responses to this game proposal, which would lead to diff games. - Also -, the timestamp int size needs to be fixed, but once it is, the timestamp can also be a way of gererating variation in game responses (and add'l game instances). )
       currentGame = currentGame.Ok[0];
-      console.log("current proposed game", currentGame);
+      // console.log("current proposed game", currentGame);
 
       if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-        console.log("Two players exist, now moving to create_game. (Player: 1, 2 shown.) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
+        // console.log("Two players exist, now moving to create_game. (Player: 1, 2 shown.) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
 
         presentGame = new Game;
         let {players} = presentGame;
         players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
         presentGame = {...presentGame, players}
-        console.log("local state record: presentGame", presentGame);
-        console.log("going to create currentGame: ", currentGame);
         createGame(currentGame);
       }
       else {}
@@ -172,65 +157,45 @@ checkResponse = (proposal_addr) => {
 ///////////////////////////
 // Create Game Function
 //////////////////////////
-const createGame = (currentGame) => {
-  // Update game status for both players
-  rerenderGameState(gameMsgs.a, gameMsgs.a);
 
-  if(amAuthor === true) {
-    // If player is game author:
-    const myOpponent = currentGame.entry.player_1 !== whoami ? currentGame.entry.player_1 : currentGame.entry.player_2;
-    callHCApi("main", "get_game_hash", {opponent:myOpponent, timestamp:0}).then(gameHash => {
-      console.log("gameHash : ", gameHash);
-      let parsedGameHash = JSON.parse(gameHash);
-      if(!parsedGameHash.Err){
-        const game = parsedGameHash.Ok;
-        console.log("Following game has started: ", game);
+const startGame = (myOpponent, ZomeFn) => {
+  callHCApi("main", ZomeFn, {opponent:myOpponent, timestamp:0}).then(gameHash => {
+    // console.log("gameHash : ", gameHash);
+    let parsedGameHash = JSON.parse(gameHash);
+    if(!parsedGameHash.Err){
+      const game = parsedGameHash.Ok;
+      console.log("You are playing the following game : ", game);
 
-        let {id} = presentGame;
-        id = game;
-        presentGame = {...presentGame, id}
+      // update global game var
+      let {id} = presentGame;
+      id = game;
+      presentGame = {...presentGame, id}
+      console.log("local state record: presentGame", presentGame);
 
-        // set board scene for player 2
-        boardState(game);
-      }
-      else{
-        console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
-
-        gameErrorMessage = "Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
-
-        $('#gameModalLabel').html("Notice");
-        $('#gameMessage').html(gameErrorMessage);
-        $('#gameModal').modal("show");
-      }
-    });
-  }
-  else {
-    // If player is NOT game author:
-    const myOpponent = currentGame.entry.player_2 !== whoami ? currentGame.entry.player_2 : currentGame.entry.player_1;
-    callHCApi("main", "create_game", {opponent: myOpponent, timestamp:0}).then(gameHash => {
-      console.log("gameHash : ", gameHash);
-      let parsedGameHash = JSON.parse(gameHash);
-      if(!parsedGameHash.Err) {
-        const game = parsedGameHash.Ok;
-        console.log(" Following game has started:", game);
-
-        let {id} = presentGame;
-        id = game;
-        presentGame = {...presentGame, id}
-
-        // set board scene for player 1
-        boardState(game);
+      // set board scene
+      boardState(game);
     }
     else{
-        console.log("Failed to get game hash. Error: ", parsedGameHash.Err);
-        gameErrorMessage = "Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
+      console.log("Failed to get game hash. Error: ", JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed);
 
-        $('#gameModalLabel').html("Notice");
-        $('#gameMessage').html(gameErrorMessage);
-        $('#gameModal').modal("show");
-      }
-    });
-  };
+      gameErrorMessage = "Error: "+ JSON.parse(JSON.parse(gameHash).Err.Internal).kind.ValidationFailed;
+
+      $('#gameModalLabel').html("Notice");
+      $('#gameMessage').html(gameErrorMessage);
+      $('#gameModal').modal("show");
+    }
+  });
+}
+
+
+const createGame = (currentGame) => {
+  // Update game status for both players :
+  rerenderGameState(gameMsgs.a, gameMsgs.a);
+  // based on player id, determine the game opponent
+  const myOpponent = currentGame.entry.player_1 === whoami ? currentGame.entry.player_2 : currentGame.entry.player_1;
+  // based on player id, either create the game hash or retrieve the game hash that game opponent created
+  const ZomeFn = currentGame.entry.player_1 === whoami ? "create_game" : "get_game_hash";
+  startGame(myOpponent, ZomeFn);
  }
 
  //////////////////////////////////////////////////////////////////
@@ -240,13 +205,15 @@ const boardState = (game_address) => {
   callHCApi("main", "get_state", {game_address}).then(state => {
     playerState = JSON.parse(state).Ok;
 
-    console.log("game state.moves  :", playerState);
     // deliver game start instructions
     if(playerState.moves && playerState.moves.length<=0) {
       winnerMessage = 'Welcome. \n \n You will now begin the game of Holochain Simple Checkers.  \n \n To determine which player and color you are, reference the Game Board. This is a simple game of checkers, wherein no Kings exist and skipping pawns is not allowed. \n \n The player who first reaches the opposing side of the board is the winner.  \n \n Player 2 will begin.  \n \n Good luck.'
       $('#gameModalLabel').html("Game Play");
       $('#gameMessage').html(winnerMessage);
       $('#gameModal').modal("show");
+    }
+    else {
+      console.log("game state moves # = ", playerState.moves.length);
     }
 
     refactorState(playerState);
@@ -264,6 +231,7 @@ const refactorState = (playerState) => {
  //    // Update game status for both players
  //    rerenderGameState(gameMsgs.e, gameMsgs.d);
  //  }
+// NOTE: Currently irrelevant while API doesn't exist for resignation
  // else if(playerState.player_1.resigned){
  //    // Update game status for both players
  //    rerenderGameState(gameMsgs.c, gameMsgs.d);
@@ -320,8 +288,6 @@ const refactorPieces = (pieces) => {
      newPlacement = {x, y};
      presentGame = {...presentGame, requestedMove:newPlacement }
 
-     console.log("XY:",x,y);
-     console.log("Present Game:",presentGame);
      // call make_move api
      makeMove();
      // remove hightlight path
@@ -344,27 +310,20 @@ $('#checkerTable tbody').on('click','td',function() {
   }
 
   if($(tokenSelected).hasClass("highlight-path")){
-    console.log("TRUE");
     initiateMove(x,y)
   }
   else {
     const playerColor = presentGame.players.player1 === whoami? 'red-piece' : 'black-piece';
-    console.log("playerColor : ", playerColor);
-    console.log("SPAN:",$(tokenSelected).find("span"));
-
     if(!$(tokenSelected).find("span").hasClass(playerColor)){
-      console.log("Not your piece");
       return null;
     }
 
     if($(tokenSelected).find("span").hasClass(playerColor) && $('.hightlight-path')){
-      console.log("inside remove highlight-path class....");
       // if player selects diff token, remove all spaces with highlight-path classes (in order to create new/correct ones)
       clearPath()
     }
 
     previousPlacement = {x, y};
-    // console.log("previousPlacement ", previousPlacement);
     presentGame = {...presentGame, previousMove:previousPlacement }
     hightlightPath(playerColor)
   }
@@ -381,9 +340,9 @@ validNumbers = (number) => {
 //////////////////////////
 // highlight the availble spaces to move token
 const hightlightPath = (playerColor) => {
-  console.log("inside the hightlightPath : playerColor, previousPlacement = ", playerColor, previousPlacement);
+  console.log("valid move selection: playerColor, previousPlacement = ", playerColor, previousPlacement);
   const {x:currentX , y:currentY} = previousPlacement;
-  // generate (x,y) pairs to form "v"
+  // generate (x,y) pairs to form a hightlighted v-shaped path
   let rightXPath = currentX;
   let leftXPath = currentX;
   let forwardPath = currentY;
@@ -441,7 +400,6 @@ const makeMove = () => {
    const player1tokens = playerState.player_1.pieces;
    const player2tokens = playerState.player_2.pieces;
 
-   // piece coordinates are stored as: { x: 0, y: 0 }
    // player 1 === red token player
    const player1wins = player1tokens.find(piece => piece.y === 7);
 
@@ -463,4 +421,4 @@ const makeMove = () => {
    }
  }
 
-}); // end of file
+});

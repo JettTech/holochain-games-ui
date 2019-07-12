@@ -1,16 +1,14 @@
 // for agent 1 build :
-const WS_PORT = "ws://localhost:3001";
 const INSTANCE_ID = "holochain-checkers-instance";
 
-// // for agent 2 build :
-// const WS_PORT = "ws://localhost:3002";
+// for agent 2 build :
 // const INSTANCE_ID = "holochain-checkers-instance-two";
 
 //////////////////////////////////////////////////////////////////
               // Holochain API Call Function:
 //////////////////////////////////////////////////////////////////
 const callHCApi = (zome, funcName, params) => {
-  const response = window.holochainclient.connect(WS_PORT).then(async({callZome, close}) => {
+  const response = window.holochainclient.connect().then(async({callZome, close}) => {
       return await callZome(INSTANCE_ID, zome, funcName)(params)
   })
   return response;
@@ -26,8 +24,6 @@ $(document).ready(function($) {
   let pendingGamesArray = [];
   class Game {
     constructor() {
-      this.id = "game_hash",
-      this.timestamp= 0,
       this.name = "",
       this.players = {
         player1: "",
@@ -143,4 +139,4 @@ $(document).ready(function($) {
     pendingGamesArray.push(newGame);
   };
 
-}); // end of file
+});
