@@ -83,22 +83,45 @@ const rerenderGameState = (agent1state, agent2state) => {
       console.log("amAuthor (should be false): ", amAuthor);
       document.getElementById("agent1").innerHTML = "Me"
     }
-    // set timestamp to be constant (current hack prior to int size decision)
-    const timestamp = 0; // timestamp as number
 
-    // accept proposal, and if pass validation without errors, proceed to creating the game!
-    callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
-      let parsedHash = JSON.parse(gameHash);
-      if(!parsedHash.Err){
-        checkResponse(proposal_addr);
+    callHCApi("main", "check_responses", {proposal_addr}).then((games) => {
+      let currentGame = JSON.parse(games);
+      // console.log("accepted games array length", currentGame.Ok.length);
+      if(!currentGame.Err && currentGame.Ok.length > 0){
+        // find the first reponse to game proposal that opponent has agreed to
+        const opponentRejoinGame = currentGame.Ok.find(game => {
+          return game.entry.player_1 === whoami
+        })
+
+        if(opponentRejoinGame) {
+          // set global var reference
+          presentGame = new Game;
+          let {players} = presentGame;
+          players = {player1: opponentRejoinGame.entry.player_1, player2: opponentRejoinGame.entry.player_2};
+          presentGame = {...presentGame, players}
+
+          // redetermine previous game hash
+          createGame(opponentRejoinGame);
+        }
       }
-      else{
-        console.log("Failed to Accept Proposal. Error: ", parsedHash.Err.Internal);
+      else {
+          // set timestamp to be constant (current hack prior to int size decision)
+          const timestamp = 0; // timestamp as number
+          // accept proposal, and if pass validation without errors, proceed to creating the game!
+          callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+            let parsedHash = JSON.parse(gameHash);
+            if(!parsedHash.Err){
+              checkResponse(proposal_addr);
+            }
+            else {
+              console.log("Failed to Accept Proposal. Error: ", parsedHash.Err.Internal);
 
-        gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: " + parsedHash.Err.Internal;
-        $('#gameModalLabel').html("Notice");
-        $('#gameMessage').html(gameErrorMessage);
-        $('#gameModal').modal("show");
+              gameErrorMessage = "\n Hey there! \n \n It looks like you're visiting a game you authored.  Feel free to look around, but you'll need a second player in order to start the game. \n \n Game Rule: " + parsedHash.Err.Internal;
+              $('#gameModalLabel').html("Notice");
+              $('#gameMessage').html(gameErrorMessage);
+              $('#gameModal').modal("show");
+          }
+        });
       }
     })
   });
@@ -115,17 +138,15 @@ const rerenderGameState = (agent1state, agent2state) => {
 ///////////////////////////////
 // verify at least one proposal response exists, choose 1st one (for now), and create game:
 checkResponse = (proposal_addr) => {
-  callHCApi("main", "check_responses", {proposal_addr}).then((game) => {
-    let currentGame = JSON.parse(game);
+  callHCApi("main", "check_responses", {proposal_addr}).then((games) => {
+    let currentGame = JSON.parse(games);
+    // console.log("accepted games array length", currentGame.Ok.length);
     if(!currentGame.Err && currentGame.Ok.length > 0){
       // Choose first game in array.
       // NOTE : Later iterations can include an ability to choose between different responses to this game proposal, which would lead to diff games. - Also -, the timestamp int size needs to be fixed, but once it is, the timestamp can also be a way of gererating variation in game responses (and add'l game instances). )
       currentGame = currentGame.Ok[0];
-      // console.log("current proposed game", currentGame);
 
       if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-        // console.log("Two players exist, now moving to create_game. (Player: 1, 2 shown.) >>", currentGame.entry.player_1, currentGame.entry.player_2 );
-
         presentGame = new Game;
         let {players} = presentGame;
         players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
@@ -160,7 +181,6 @@ checkResponse = (proposal_addr) => {
 
 const startGame = (myOpponent, ZomeFn) => {
   callHCApi("main", ZomeFn, {opponent:myOpponent, timestamp:0}).then(gameHash => {
-    // console.log("gameHash : ", gameHash);
     let parsedGameHash = JSON.parse(gameHash);
     if(!parsedGameHash.Err){
       const game = parsedGameHash.Ok;
@@ -340,7 +360,7 @@ validNumbers = (number) => {
 //////////////////////////
 // highlight the availble spaces to move token
 const hightlightPath = (playerColor) => {
-  console.log("valid move selection: playerColor, previousPlacement = ", playerColor, previousPlacement);
+  // console.log("chosen token: playerColor, previousPlacement = ", playerColor, previousPlacement);
   const {x:currentX , y:currentY} = previousPlacement;
   // generate (x,y) pairs to form a hightlighted v-shaped path
   let rightXPath = currentX;
