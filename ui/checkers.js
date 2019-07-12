@@ -17,7 +17,7 @@ const callHCApi = (zome, funcName, params) => {
 
 $(document).ready(function(){
 ///////////////////////////
-//Global Vars:
+// Global Vars:
 ///////////////////////////
 const gameMsgs = {
   a: "Game In Process",
@@ -35,7 +35,7 @@ let winnerMessage = "";
 class Game {
   constructor() {
     this.id = "game_hash",
-    this.timestamp= 0,
+    this.timestamp = 0,
     this.players = {
       player1: "",
       player2: ""
@@ -72,6 +72,16 @@ const rerenderGameState = (agent1state, agent2state) => {
     const urlParirs = urlHash.split("?")[1].split("&");
     const proposal_addr = urlParirs[0].split("=")[1];
     const game_author = urlParirs[1].split("=")[1];
+    const url_timestamp = parseInt(urlParirs[2].split("=")[1]);
+
+    console.log("url_timestamp", url_timestamp);
+    console.log("type of url_timestamp", typeof url_timestamp);
+    console.log("proposal_addr from url", proposal_addr);
+    // set timestamp to be global var (current hack prior to int size issue)
+    presentGame = new Game;
+    let {timestamp} = presentGame;
+    timestamp = url_timestamp;
+    presentGame = {...presentGame, timestamp}
 
     if(whoami === game_author) {
       amAuthor = true;
@@ -88,14 +98,13 @@ const rerenderGameState = (agent1state, agent2state) => {
       let currentGame = JSON.parse(games);
       // console.log("accepted games array length", currentGame.Ok.length);
       if(!currentGame.Err && currentGame.Ok.length > 0){
-        // find the first reponse to game proposal that opponent has agreed to
+        // find the first response to game proposal to which opponent has agreed
         const opponentRejoinGame = currentGame.Ok.find(game => {
           return game.entry.player_1 === whoami
         })
 
         if(opponentRejoinGame) {
           // set global var reference
-          presentGame = new Game;
           let {players} = presentGame;
           players = {player1: opponentRejoinGame.entry.player_1, player2: opponentRejoinGame.entry.player_2};
           presentGame = {...presentGame, players}
@@ -105,12 +114,12 @@ const rerenderGameState = (agent1state, agent2state) => {
         }
       }
       else {
-          // set timestamp to be constant (current hack prior to int size decision)
-          const timestamp = 0; // timestamp as number
           // accept proposal, and if pass validation without errors, proceed to creating the game!
-          callHCApi("main", "accept_proposal", {proposal_addr, created_at: timestamp}).then((gameHash) => {
+          callHCApi("main", "accept_proposal", {proposal_addr, created_at: presentGame.timestamp}).then((gameHash) => {
             let parsedHash = JSON.parse(gameHash);
             if(!parsedHash.Err){
+              console.log("no error, here is proposal_addr", proposal_addr);
+              console.log("parsedHash", parsedHash);
               checkResponse(proposal_addr);
             }
             else {
@@ -129,7 +138,7 @@ const rerenderGameState = (agent1state, agent2state) => {
 
 // trigger refresh of game state...
 (function refreshBoardTimer(){
-  setTimeout("location.reload(true);",10000);
+  setTimeout("location.reload(true);",50000);
 })();
 
 
@@ -139,15 +148,15 @@ const rerenderGameState = (agent1state, agent2state) => {
 // verify at least one proposal response exists, choose 1st one (for now), and create game:
 checkResponse = (proposal_addr) => {
   callHCApi("main", "check_responses", {proposal_addr}).then((games) => {
+    console.log("games", games);
     let currentGame = JSON.parse(games);
     // console.log("accepted games array length", currentGame.Ok.length);
     if(!currentGame.Err && currentGame.Ok.length > 0){
       // Choose first game in array.
-      // NOTE : Later iterations can include an ability to choose between different responses to this game proposal, which would lead to diff games. - Also -, the timestamp int size needs to be fixed, but once it is, the timestamp can also be a way of gererating variation in game responses (and add'l game instances). )
+      // NOTE : Later iterations can include an ability to choose between different responses to this game proposal, which would lead to diff games.)
       currentGame = currentGame.Ok[0];
 
       if(currentGame.entry && currentGame.entry.player_1 && currentGame.entry.player_2){
-        presentGame = new Game;
         let {players} = presentGame;
         players = {player1: currentGame.entry.player_1, player2: currentGame.entry.player_2 };
         presentGame = {...presentGame, players}
@@ -180,7 +189,8 @@ checkResponse = (proposal_addr) => {
 //////////////////////////
 
 const startGame = (myOpponent, ZomeFn) => {
-  callHCApi("main", ZomeFn, {opponent:myOpponent, timestamp:0}).then(gameHash => {
+  console.log("presentGame.timestamp", presentGame.timestamp);
+  callHCApi("main", ZomeFn, {opponent:myOpponent, timestamp: presentGame.timestamp}).then(gameHash => {
     let parsedGameHash = JSON.parse(gameHash);
     if(!parsedGameHash.Err){
       const game = parsedGameHash.Ok;

@@ -25,6 +25,7 @@ $(document).ready(function($) {
   class Game {
     constructor() {
       this.name = "",
+      this.numId = 0,
       this.players = {
         player1: "",
         player2: ""
@@ -49,7 +50,7 @@ $(document).ready(function($) {
       let pendingGames = JSON.parse(availableGames).Ok;
 
       if(!pendingGames || !pendingGames.length > 0) {
-        errorMessage = "No games current games exist! Click'Create New Game to get started.'";
+        errorMessage = "No games current games exist! Click 'Create New Game to get started.'";
         $('#alertMessage').html(errorMessage);
         $('#alertModal').modal("show");
       }
@@ -58,18 +59,29 @@ $(document).ready(function($) {
         const myGames = pendingGames.filter(proposal => {
           return proposal.entry.agent === whoami;
         });
-        // create table for ny games proposed
+        // create table for my games proposed
         let myAuthoredGames = "";
         myGames.forEach(proposal => {
-          callHCApi("main", "accept_proposal", {proposal_addr: proposal.address, created_at: 0}).then((gameHash) => {
+          let numId = 0;
+          const nameNums = proposal.entry.message.split("");
+          const numIdArray = nameNums.map((letter, index) => {
+            const asciiVal = proposal.entry.message.charCodeAt(index);
+            return asciiVal;
+          })
+          numIdArray.forEach(num => {
+            return numId+=num;
+          })
+          console.log(numId);
+
+          callHCApi("main", "accept_proposal", {proposal_addr: proposal.address, created_at: numId}).then((gameHash) => {
             let parsedHash = JSON.parse(gameHash);
             if(!parsedHash.Err){
-               myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+               myAuthoredGames = "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "&numid=" + numId + " 'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
                $( "#my-pending-games" ).append( myAuthoredGames );
 
             }
             else {
-              myAuthoredGames = "<tr id='" + proposal.address + "' class='disabled' aria-disabled='true'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+              myAuthoredGames = "<tr id='" + proposal.address + "' class='disabled' aria-disabled='true'><td>" + proposal.entry.message + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + whoami + "&numid=" + numId + " 'type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
               $( "#my-pending-games" ).append( myAuthoredGames );
             }
           });
@@ -83,7 +95,17 @@ $(document).ready(function($) {
         // create table for games proposed by others
         let currentProposedGames = "";
         otherGames.forEach(proposal => {
-          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td data-toggle='popover' title='Full Agent Hash' data-content='" + proposal.entry.agent + "'>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
+          let numId = 0;
+          const nameNums = proposal.entry.message.split("");
+          const numIdArray = nameNums.map((letter, index) => {
+            const asciiVal = proposal.entry.message.charCodeAt(index);
+            return asciiVal;
+          })
+          numIdArray.forEach(num => {
+            return numId+=num;
+          })
+
+          currentProposedGames += "<tr id='" + proposal.address + "'><td>" + proposal.entry.message + "</td><td data-toggle='popover' title='Full Agent Hash' data-content='" + proposal.entry.agent + "'>" + getDisplayName(proposal.entry.agent) + "</td><td><a id='startGameButton' href='/checkers.html?game=" + proposal.address + "&author=" + proposal.entry.agent + "&numid=" + numId + "' type='button' data-hash='" + proposal.address + "'>Join Game</a></td></tr>"
         })
         document.getElementById("pending-games").innerHTML = currentProposedGames;
       }
@@ -111,6 +133,7 @@ $(document).ready(function($) {
   $("#addGameButton").on("click", () => {
     const proposalMessage = $("#nameInput").val().trim();
     console.log("#nameInput : ", proposalMessage);
+
     // create new game obj and add to table:
     newGame = new Game;
     let {players, name} = newGame;
