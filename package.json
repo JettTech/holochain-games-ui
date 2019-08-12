@@ -5,8 +5,8 @@
   "description": "A game lobby and checkers ui to pair with holochain checkers DNA.",
   "scripts": {
     "hc:start": "holochain -c ./conductor-config.toml",
-    "build1": "rm -r ui-agent1 && cp -r ui ui-agent1",
-    "build2": "rm -r ui-agent2 && cp -r ui ui-agent2",
+    "build1": "rm -rf ui-agent1 && cp -r ui ui-agent1",
+    "build2": "rm -rf ui-agent2 && cp -r ui ui-agent2",
     "fetch": "download-github-release willemolding generic-game-holochain"
   },
   "repository": {
