@@ -7,10 +7,6 @@
     "hc:start": "holochain -c ./conductor-config.toml",
     "build1": "rm -r ui-agent1 && cp -r ui ui-agent1",
     "build2": "rm -r ui-agent2 && cp -r ui ui-agent2",
-    "web": "hc web",
-    "test": "test",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
     "fetch": "download-github-release willemolding generic-game-holochain"
   },
   "repository": {
